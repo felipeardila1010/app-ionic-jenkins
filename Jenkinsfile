@@ -1,11 +1,8 @@
 pipeline {
-    agent {
-        label: 'master'
-    }
     stages {
-        stage('Buildd') {
+        stage('Build') {
             steps {
-                sh 'npm install'
+                sh 'echo hola'
             }
         }
     }
