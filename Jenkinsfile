@@ -1,11 +1,10 @@
 pipeline {
-    stages {
-        stage('Build') {
-            steps {
-                sh 'echo hola'
-            }
-        }
+  agent any
+  stages {
+    stage ('Initialize') {
+      steps {
+        echo 'Placeholder.'
+      }
     }
+  }
 }
-
-
