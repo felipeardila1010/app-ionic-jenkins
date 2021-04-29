@@ -3,7 +3,7 @@ pipeline {
         label: 'master'
     }
     stages {
-        stage('Build') {
+        stage('Buildd') {
             steps {
                 sh 'npm install'
             }
