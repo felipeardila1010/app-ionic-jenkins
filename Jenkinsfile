@@ -25,7 +25,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh "npm run build-$ORIGIN-$ACTUAL_BRANCH_NAME"
+                sh "npm run build-$ORIGIN-${env.BRANCH_NAME}"
             }
         }
     }
