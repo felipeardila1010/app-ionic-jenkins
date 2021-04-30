@@ -41,8 +41,14 @@ pipeline {
 
         stage('Build') {
             steps {
-                //sh "npm run build-$ORIGIN-$PREFIX_BRANCH"
-                sh "aws s3 cp www s3://jenkins-test7/pexto --recursive --acl public-read"
+                sh "npm run build-$ORIGIN-$PREFIX_BRANCH"
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh "aws s3 rm s3://jenkins-test7/$ORIGIN --recursive"
+                sh "aws s3 cp www s3://jenkins-test7/$ORIGIN --recursive --acl public-read"
             }
         }
     }
