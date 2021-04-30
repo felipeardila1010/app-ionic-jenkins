@@ -1,5 +1,6 @@
 def defineEnvironment() {
-    String ACTUAL_BRANCH_NAME = "${env.BRANCH_NAME}"
+    //String ACTUAL_BRANCH_NAME = "${env.BRANCH_NAME}"
+    String ACTUAL_BRANCH_NAME = "develop"
     String PREFIX_BRANCH = ""
     String ORIGIN = "pexto"
 
