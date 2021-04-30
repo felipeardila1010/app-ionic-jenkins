@@ -1,5 +1,5 @@
 def defineEnvironment() {
-    String actualBranchName = "${env}"
+    String actualBranchName = "${GIT_BRANCH}"
     String origin = "pexto"
 
     return [
