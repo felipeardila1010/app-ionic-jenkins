@@ -36,6 +36,19 @@ pipeline {
     }
 
     stages {
+
+        stage('Notify start in slack') {
+            environment {
+                COMMIT_INFO = sh (script: 'git --no-pager show -s --format=\'%aN in commit "%s"\'', returnStdout: true).trim()
+            }
+            steps {
+                script {
+                    slackFirstMessage = slackSend(channel: "#jenkins-$ACTUAL_BRANCH_NAME",
+                          message: "$NAME_COMPONENT_JENKINS » $ACTUAL_BRANCH_NAME #$BUILD_ID - #$BUILD_ID Started compilation (<$BUILD_URL|Open>)\n📣 Compilation #$BUILD_ID Started by ${COMMIT_INFO}")
+                }
+            }
+        }
+
         stage("Install") {
             steps {
                 sh "npm install"
@@ -48,7 +61,7 @@ pipeline {
             }
         }
 
-        stage("SonarQube Analysis") {
+        stage("SonarQube analysis") {
             steps {
                 sh "docker run --platform linux/amd64 --rm -v /Users/felipeardila1010/.m2:/root/.m2 -v $WORKSPACE:/app -w /app \
                     maven:3-alpine mvn sonar:sonar \
