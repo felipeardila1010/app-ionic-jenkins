@@ -61,16 +61,16 @@ pipeline {
             }
         }
 
-        stage("SonarQube analysis") {
-            steps {
-                sh "docker run --platform linux/amd64 --rm -v /Users/felipeardila1010/.m2:/root/.m2 -v $WORKSPACE:/app -w /app \
-                    maven:3-alpine mvn sonar:sonar \
-                        -Dsonar.projectKey=$NAME_COMPONENT_JENKINS \
-                        -Dsonar.host.url=http://sonarqube.qa.cobre.co \
-                        -Dsonar.login=d3f4b3583131da7da2430ea151ba73ae9b109821 \
-                        -Dsonar.java.binaries=./src"
-            }
-        }
+//         stage("SonarQube analysis") {
+//             steps {
+//                 sh "docker run --platform linux/amd64 --rm -v /Users/felipeardila1010/.m2:/root/.m2 -v $WORKSPACE:/app -w /app \
+//                     maven:3-alpine mvn sonar:sonar \
+//                         -Dsonar.projectKey=$NAME_COMPONENT_JENKINS \
+//                         -Dsonar.host.url=http://sonarqube.qa.cobre.co \
+//                         -Dsonar.login=d3f4b3583131da7da2430ea151ba73ae9b109821 \
+//                         -Dsonar.java.binaries=./src"
+//             }
+//         }
 
         stage("Deploy") {
             steps {
