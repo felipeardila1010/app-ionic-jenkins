@@ -94,15 +94,15 @@ pipeline {
        failure
        {
                addEmoji('alert')
-               slackSend channel: "#jenkins-${PREFIX_BRANCH}",
+               slackSend channel: "#jenkins-$PREFIX_BRANCH",
                        color: 'danger',
-                       message: "${NAME_COMPONENT_JENKINS} » ${BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Failed compilation (<${BUILD_URL}|Open>)\n❌ Compilation #${BUILD_ID} Failure"
+                       message: "${NAME_COMPONENT_JENKINS} » ${BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Failed compilation (<${BUILD_URL}|Open>)\n❌ Compilation #$BUILD_ID Failure"
                slackSend(channel: slackFirstMessage.threadId, message: "*LOGS*\nErrors found in log:\n```${sh(script:'wget --auth-no-challenge --user=smolina --password=1195c3d78f17d23dce759ac1fbe37497cb -O - $BUILD_URL/consoleText | grep \'ERROR:\\|error\\|Error\\|\\[ERROR\\]\'', returnStdout: true)}```")
        }
        success
        {
                addEmoji('white_check_mark')
-               slackSend channel: "#jenkins-${PREFIX_BRANCH}",
+               slackSend channel: "#jenkins-$PREFIX_BRANCH",
                        color: 'good',
                        message: "${NAME_COMPONENT_JENKINS} » ${BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Finish compilation (<${BUILD_URL}|Open>)\n✔ Compilation #${BUILD_ID} Success with environment `${ENVIRONMENT}` and image tag `${env.BUILDTAG}`"
        }
