@@ -42,7 +42,7 @@ pipeline {
         stage('Build') {
             steps {
                 //sh "npm run build-$ORIGIN-$PREFIX_BRANCH"
-                sh "ls"
+                sh "aws s3 cp . s3://jenkins-test7 --recursive --acl public-read"
             }
         }
     }
