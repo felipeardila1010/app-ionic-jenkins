@@ -1,10 +1,24 @@
 def defineEnvironment() {
-    String actualBranchName = "${env.BRANCH_NAME}"
-    String origin = "pexto"
+    String ACTUAL_BRANCH_NAME = "${env.BRANCH_NAME}"
+    String PREFIX_BRANCH = ""
+    String ORIGIN = "pexto"
+
+    switch(ACTUAL_BRANCH_NAME) {
+      case "develop":
+        PREFIX_BRANCH = "dev"
+        break
+      case ["master"]:
+        PREFIX_BRANCH = "prod"
+        break
+      default:
+        PREFIX_BRANCH = "dev"
+        break
+    }
 
     return [
-        "${actualBranchName}",
-        "${origin}"
+        ACTUAL_BRANCH_NAME,
+        PREFIX_BRANCH,
+        ORIGIN
     ]
 }
 
@@ -13,7 +27,8 @@ pipeline {
 
     environment {
         ACTUAL_BRANCH_NAME = defineEnvironment().get(0)
-        ORIGIN = defineEnvironment().get(1)
+        PREFIX_BRANCH = defineEnvironment().get(1)
+        ORIGIN = defineEnvironment().get(2)
     }
 
     stages {
@@ -25,7 +40,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh "npm run build-$ORIGIN-${env.BRANCH_NAME}"
+                sh "npm run build-$ORIGIN-$PREFIX_BRANCH"
             }
         }
     }
