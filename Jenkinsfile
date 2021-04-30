@@ -3,6 +3,7 @@ def defineEnvironment() {
     String ACTUAL_BRANCH_NAME = "develop"
     String PREFIX_BRANCH = ""
     String ORIGIN = "pexto"
+    String NAME_COMPONENT = "${env.JOB_NAME.split('/')[0]}"
 
     switch(ACTUAL_BRANCH_NAME) {
       case "develop":
@@ -19,7 +20,8 @@ def defineEnvironment() {
     return [
         ACTUAL_BRANCH_NAME,
         PREFIX_BRANCH,
-        ORIGIN
+        ORIGIN,
+        NAME_COMPONENT
     ]
 }
 
@@ -30,6 +32,7 @@ pipeline {
         ACTUAL_BRANCH_NAME = defineEnvironment().get(0)
         PREFIX_BRANCH = defineEnvironment().get(1)
         ORIGIN = defineEnvironment().get(2)
+        NAME_COMPONENT = defineEnvironment().get(3)
     }
 
     stages {
@@ -47,14 +50,7 @@ pipeline {
 
         stage('SonarQube Analysis') {
             steps {
-                sh '''
-                    docker run --rm -v /root/.m2:/root/.m2 -v $WORKSPACE:/app -w /app \
-                    maven:3-alpine mvn sonar:sonar \
-                        -Dsonar.projectKey=$COMPONENTE \
-                        -Dsonar.host.url=http://sonarqube.qa.cobre.co \
-                        -Dsonar.login=d3f4b3583131da7da2430ea151ba73ae9b109821 \
-                        -Dsonar.java.binaries=./src
-                '''
+                sh "echo $NAME_COMPONENT"
             }
         }
 
