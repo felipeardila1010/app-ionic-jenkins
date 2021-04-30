@@ -1,5 +1,5 @@
 def defineEnvironment() {
-    String actualBranchName = "${env.BRANCH_NAME}"
+    String actualBranchName = env.BRANCH_NAME
     String origin = "pexto"
 
     return [
@@ -25,7 +25,7 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh 'npm run build-$env.ORIGIN-$ACTUAL_BRANCH_NAME'
+                sh "npm run build-$ORIGIN-$ACTUAL_BRANCH_NAME"
             }
         }
     }
