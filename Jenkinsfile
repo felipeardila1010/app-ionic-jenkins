@@ -1,5 +1,5 @@
 def defineEnvironment() {
-    String actualBranchName = "${env.BRANCH_NAME}"
+    String actualBranchName = "${env}"
     String origin = "pexto"
 
     return [
