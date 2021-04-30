@@ -50,7 +50,7 @@ pipeline {
 
         stage("SonarQube Analysis") {
             steps {
-                sh "docker run --platform linux/amd64 --rm -v /root/.m2:/root/.m2 -v $WORKSPACE:/app -w /app \
+                sh "docker run --platform linux/amd64 --rm -v /Users/felipeardila1010/.m2:/root/.m2 -v $WORKSPACE:/app -w /app \
                     maven:3-alpine mvn sonar:sonar \
                         -Dsonar.projectKey=$NAME_COMPONENT_JENKINS \
                         -Dsonar.host.url=http://sonarqube.qa.cobre.co \
