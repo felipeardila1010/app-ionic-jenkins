@@ -41,7 +41,8 @@ pipeline {
 
         stage('Build') {
             steps {
-                sh "npm run build-$ORIGIN-$PREFIX_BRANCH"
+                //sh "npm run build-$ORIGIN-$PREFIX_BRANCH"
+                sh "aws s3 ls"
             }
         }
     }
