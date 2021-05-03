@@ -114,26 +114,19 @@ pipeline {
 
         stage("Build") {
           steps {
-            parallel(
-              "step 1": {
-                echo "hello"
 
-                script {
-                  def LIST_EMISORES = []
-                  if ( params.Emisores != '' ) {
-                      LIST_EMISORES = params.Emisores.split(',')
-                      sh "echo $LIST_EMISORES"
-                      //sh "ng build --output-path=${ORIGIN}"
+            script {
+              def LIST_EMISORES = []
+              if ( params.Emisores != '' ) {
+                  LIST_EMISORES = params.Emisores.split(',')
+                  sh "echo $LIST_EMISORES"
+                  //sh "ng build --output-path=${ORIGIN}"
 
-                      for (emisor in LIST_EMISORES) {
-                        sh "echo $emisor"
-                      }
+                  for (emisor in LIST_EMISORES) {
+                    sh "echo for emisor `$emisor`\n"
                   }
-                }
-              },
-              "step 2": { echo "world" },
-              "step 3": { echo "world" }
-            )
+              }
+            }
           }
         }
 
