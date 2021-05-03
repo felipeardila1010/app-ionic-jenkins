@@ -113,18 +113,24 @@ pipeline {
         }
 
         stage("Build") {
-            steps {
-              sh "echo hola"
-            }
+          steps {
+            parallel(
+              "step 1": {
+                echo "hello"
 
-            script {
-              def LIST_EMISORES = []
-              if ( params.Emisores != '' ) {
-                  LIST_EMISORES = params.Emisores.split(',')
-                  sh "echo $LIST_EMISORES"
-                  //sh "ng build --output-path=${ORIGIN}"
-              }
-            }
+                script {
+                              def LIST_EMISORES = []
+                              if ( params.Emisores != '' ) {
+                                  LIST_EMISORES = params.Emisores.split(',')
+                                  sh "echo $LIST_EMISORES"
+                                  //sh "ng build --output-path=${ORIGIN}"
+                              }
+                            }
+              },
+              "step 2": { echo "world" },
+              "step 3": { echo "world" }
+            )
+          }
         }
 
 //         stage("SonarQube analysis") {
