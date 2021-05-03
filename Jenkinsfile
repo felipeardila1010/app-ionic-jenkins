@@ -54,14 +54,14 @@ def addEmoji(emoji) {
 
 def responseFirstMessageAbort() {
     if (slackFirstMessage != null) {
-        slackSend(channel: slackFirstMessage.threadId,
-                        color: 'warning',
-                        message: "Compilation #${BUILD_ID} Aborted \n${sh(script:'wget --auth-no-challenge --user=smolina --password=1195c3d78f17d23dce759ac1fbe37497cb -O - $BUILD_URL/consoleText | grep \'Aborted by\'', returnStdout: true).substring(27)}")
+//         slackSend(channel: slackFirstMessage.threadId,
+//                         color: 'warning',
+//                         message: "Compilation #${BUILD_ID} Aborted \n${sh(script:'wget --auth-no-challenge --user=smolina --password=1195c3d78f17d23dce759ac1fbe37497cb -O - $BUILD_URL/consoleText | grep \'Aborted by\'', returnStdout: true).substring(27)}")
     }
 }
 def responseSlackError() {
     if (slackFirstMessage != null) {
-        slackSend(channel: slackFirstMessage.threadId, message: "*LOGS*\nErrors found in log:\n```${sh(script:'wget --auth-no-challenge --user=smolina --password=1195c3d78f17d23dce759ac1fbe37497cb -O - $BUILD_URL/consoleText | grep \'ERROR:\\|error\\|Error\\|\\[ERROR\\]\'', returnStdout: true)}```")
+        //slackSend(channel: slackFirstMessage.threadId, message: "*LOGS*\nErrors found in log:\n```${sh(script:'wget --auth-no-challenge --user=smolina --password=1195c3d78f17d23dce759ac1fbe37497cb -O - $BUILD_URL/consoleText | grep \'ERROR:\\|error\\|Error\\|\\[ERROR\\]\'', returnStdout: true)}```")
     }
 }
 
@@ -191,14 +191,14 @@ pipeline {
        {
          slackSend channel: "#jenkins-${PREFIX_BRANCH}",
                    color: 'danger',
-                   message: "${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Failed compilation\n❌ Compilation #${BUILD_ID}${env.MESSAGE_ERROR}"
+                   message: "FE :iphone::vibration_mode: - ${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Failed compilation\n❌ Compilation #${BUILD_ID}${env.MESSAGE_ERROR}"
          responseSlackError()
        }
        success
        {
          slackSend channel: "#jenkins-${PREFIX_BRANCH}",
                    color: 'good',
-                   message: "${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Finish compilation\n✔ Compilation #${BUILD_ID} with image tag `1.0.0`\n"
+                   message: "FE :iphone::vibration_mode: - ${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Finish compilation\n✔ Compilation #${BUILD_ID} with image tag `1.0.0`\n"
        }
        aborted {
           addEmoji('black_square_for_stop')
