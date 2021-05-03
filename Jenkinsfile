@@ -24,6 +24,7 @@ def defineEnvironment() {
     String ORIGIN = "pexto"
     String NAME_COMPONENT_JENKINS = "${env.JOB_NAME.split("/")[0]}"
     String[] ORIGINS_AVAILABLE
+    String PACKAGE_VERSION = sh(returnStdout: true, script: '''grep 'version' package.json | cut -d '"' -f4 | tr '\n' '\0''')
 
     switch(ACTUAL_BRANCH_NAME) {
       case "develop":
@@ -53,7 +54,8 @@ def defineEnvironment() {
         ORIGIN,
         NAME_COMPONENT_JENKINS,
         ENVIRONMENT,
-        ORIGINS_AVAILABLE
+        ORIGINS_AVAILABLE,
+        PACKAGE_VERSION
     ]
 }
 
@@ -113,6 +115,7 @@ pipeline {
         NAME_COMPONENT_JENKINS = defineEnvironment().get(4)
         ENVIRONMENT = defineEnvironment().get(5)
         ORIGINS_AVAILABLE = defineEnvironment().get(6)
+        PACKAGE_VERSION = defineEnvironment().get(7)
     }
 
     parameters {
