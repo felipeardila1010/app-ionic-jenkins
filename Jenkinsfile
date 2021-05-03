@@ -165,18 +165,21 @@ pipeline {
         stage("Build") {
           steps {
             script {
+              def tests = [:]
               def listEmisores = env.STRING_FINAL_LIST_EMISORES.split(",")
               for (codeInfraEmisor in listEmisores) {
                 valuesOrigin = getValueEmisor(codeInfraEmisor)
                 nameOrigin = valuesOrigin.split(",")[1]
 
-                stages["Build-${nameOrigin}"] = {
-                    stage("Build-1-${nameOrigin}") {
-                      sh "echo ${nameOrigin}"
-                        //sh "ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
-                    }
+                tests["Build-${nameOrigin}"] = {
+                  node {
+                      stage("Build-${nameOrigin}") {
+                          //sh "ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
+                          echo '${nameOrigin}'
+                      }
                 }
               }
+              parallel tests
             }
           }
         }
