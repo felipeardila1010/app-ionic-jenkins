@@ -1,3 +1,15 @@
+def getValueEmisor(originToSearch) {
+  def origins = [
+    "pxt": "pxt01",
+    "fjy": "fjy03",
+    "smx": "smx04",
+    "bmt": "bmt02",
+    "gmt": "gmt06",
+  ]
+
+  return origins[originToSearch]
+}
+
 def defineEnvironment() {
     // Static variables
     String ORIGINS_AVAILABLE_DEV = "pxt"
@@ -45,7 +57,6 @@ def defineEnvironment() {
     ]
 }
 
-// Define methods
 def addEmoji(emoji) {
     if (slackFirstMessage != null) {
         slackFirstMessage.addReaction(emoji)
@@ -78,7 +89,6 @@ def defineEmisores(){
       }
 
       if(FINAL_LIST_EMISORES.size() > 0) {
-        env.FINAL_LIST_EMISORES = FINAL_LIST_EMISORES
         env.STRING_FINAL_LIST_EMISORES = FINAL_LIST_EMISORES.join(",")
         sh "echo Emisores a desplegar= $FINAL_LIST_EMISORES"
       } else {
@@ -116,6 +126,11 @@ pipeline {
                 script {
                     sh "echo Definiendo emisores a desplegar..."
                     defineEmisores() // Call for define emisores
+
+                    output = getValueEmisor("pxt")
+                    echo "The sum is2 ${output}"
+                    output = getValueEmisor("pxtt")
+                    echo "The sum is2 ${output}"
 
                     env.MESSAGE_ERROR = ''
                     if ( params.Emisores == '' && env.ACTUAL_BRANCH_NAME.equals('prod')) {
@@ -155,12 +170,10 @@ pipeline {
         stage("Build") {
           steps {
             script {
-              sh "echo holasii=${env.FINAL_LIST_EMISORES}"
-              //sh "ng build --output-path=${ORIGIN}"
-              def valuee = env.STRING_FINAL_LIST_EMISORES.split(",")
-              sh "echo ooo=$valuee"
-              for (emisor in valuee) {
+              def listEmisores = env.STRING_FINAL_LIST_EMISORES.split(",")
+              for (emisor in listEmisores) {
                 sh "echo emisor=$emisor"
+                //sh "ng build --output-path=${ORIGIN}"
               }
             }
           }
