@@ -174,8 +174,7 @@ pipeline {
                 tests["Build-${nameOrigin}"] = {
                   node {
                       stage("Build-${nameOrigin}") {
-                          //sh "ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
-                          echo '${nameOrigin}'
+                          sh "ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
                       }
                   }
                 }
