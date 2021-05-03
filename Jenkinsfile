@@ -2,6 +2,7 @@ def defineEnvironment() {
     //String ACTUAL_BRANCH_NAME = "${env.BRANCH_NAME}"
     String ACTUAL_BRANCH_NAME = "develop"
     String PREFIX_BRANCH = ""
+    String PREFIX_BRANCH_S3 = ""
     String ENVIRONMENT = ""
     String ORIGIN = "pexto"
     String NAME_COMPONENT_JENKINS = "${env.JOB_NAME.split("/")[0]}"
@@ -9,14 +10,17 @@ def defineEnvironment() {
     switch(ACTUAL_BRANCH_NAME) {
       case "develop":
         PREFIX_BRANCH = "dev"
+        PREFIX_BRANCH_S3 = "dev"
         ENVIRONMENT = "develop"
         break
       case ["master"]:
         PREFIX_BRANCH = "prod"
+        PREFIX_BRANCH_S3 = ""
         ENVIRONMENT = "production"
         break
       default:
         PREFIX_BRANCH = "dev"
+        PREFIX_BRANCH_S3 = "dev"
         ENVIRONMENT = "develop"
         break
     }
@@ -24,6 +28,7 @@ def defineEnvironment() {
     return [
         ACTUAL_BRANCH_NAME,
         PREFIX_BRANCH,
+        PREFIX_BRANCH_S3,
         ORIGIN,
         NAME_COMPONENT_JENKINS,
         ENVIRONMENT
@@ -36,9 +41,10 @@ pipeline {
     environment {
         ACTUAL_BRANCH_NAME = defineEnvironment().get(0)
         PREFIX_BRANCH = defineEnvironment().get(1)
-        ORIGIN = defineEnvironment().get(2)
-        NAME_COMPONENT_JENKINS = defineEnvironment().get(3)
-        ENVIRONMENT = defineEnvironment().get(4)
+        PREFIX_BRANCH_S3 = defineEnvironment().get(2)
+        ORIGIN = defineEnvironment().get(3)
+        NAME_COMPONENT_JENKINS = defineEnvironment().get(4)
+        ENVIRONMENT = defineEnvironment().get(5)
     }
 
     stages {
@@ -50,7 +56,7 @@ pipeline {
             steps {
                 script {
                     slackFirstMessage = slackSend(channel: "#jenkins-$PREFIX_BRANCH",
-                          message: "${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Started compilation (<$BUILD_URL|Open>)\n📣 Compilation #$BUILD_ID Started by ${COMMIT_INFO}")
+                          message: "${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Started compilation (<${BUILD_URL}|Open>)\n📣 Compilation #$BUILD_ID Started by ${COMMIT_INFO}")
                 }
             }
         }
@@ -94,7 +100,7 @@ pipeline {
        failure
        {
                addEmoji('alert')
-               slackSend channel: "#jenkins-$PREFIX_BRANCH",
+               slackSend channel: "#jenkins-${PREFIX_BRANCH}",
                        color: 'danger',
                        message: "${NAME_COMPONENT_JENKINS} » ${BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Failed compilation (<${BUILD_URL}|Open>)\n❌ Compilation #$BUILD_ID Failure"
                slackSend(channel: slackFirstMessage.threadId, message: "*LOGS*\nErrors found in log:\n```${sh(script:'wget --auth-no-challenge --user=smolina --password=1195c3d78f17d23dce759ac1fbe37497cb -O - $BUILD_URL/consoleText | grep \'ERROR:\\|error\\|Error\\|\\[ERROR\\]\'', returnStdout: true)}```")
@@ -102,7 +108,7 @@ pipeline {
        success
        {
                addEmoji('white_check_mark')
-               slackSend channel: "#jenkins-$PREFIX_BRANCH",
+               slackSend channel: "#jenkins-${PREFIX_BRANCH}",
                        color: 'good',
                        message: "${NAME_COMPONENT_JENKINS} » ${BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Finish compilation (<${BUILD_URL}|Open>)\n✔ Compilation #${BUILD_ID} Success with environment `${ENVIRONMENT}` and image tag `${env.BUILDTAG}`"
        }
