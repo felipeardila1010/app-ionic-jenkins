@@ -167,11 +167,9 @@ pipeline {
             script {
               def listEmisores = env.STRING_FINAL_LIST_EMISORES.split(",")
               for (codeInfraEmisor in listEmisores) {
-                echo "codeInfraEmisor=${codeInfraEmisor}"
                 valuesEmisor = getValueEmisor(codeInfraEmisor)
-                echo "valuesEmisor=${valuesEmisor}"
-                codeEmisor = valuesEmisor.split(",")[1]
-                sh "echo codeEmisor=$ecodeEmisor"
+                nameEmisor = valuesEmisor.split(",")[1]
+                sh "echo nameEmisor=$nameEmisor"
                 //sh "ng build --output-path=${ORIGIN}"
               }
             }
