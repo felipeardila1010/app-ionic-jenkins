@@ -1,4 +1,9 @@
 def defineEnvironment() {
+    // Static variables
+    String ORIGINS_AVAILABLE_DEV = "pxt"
+    String ORIGINS_AVAILABLE_PROD = "pxt fjy btm smx gmt"
+
+    // Custom variables
     //String ACTUAL_BRANCH_NAME = "${env.BRANCH_NAME}"
     String ACTUAL_BRANCH_NAME = "develop"
     String PREFIX_BRANCH = ""
@@ -31,7 +36,9 @@ def defineEnvironment() {
         PREFIX_BRANCH_S3,
         ORIGIN,
         NAME_COMPONENT_JENKINS,
-        ENVIRONMENT
+        ENVIRONMENT,
+        ORIGINS_AVAILABLE_DEV,
+        ORIGINS_AVAILABLE_PROD
     ]
 }
 
@@ -66,6 +73,8 @@ pipeline {
         ORIGIN = defineEnvironment().get(3)
         NAME_COMPONENT_JENKINS = defineEnvironment().get(4)
         ENVIRONMENT = defineEnvironment().get(5)
+        ORIGINS_AVAILABLE_DEV = defineEnvironment().get(6)
+        ORIGINS_AVAILABLE_PROD = defineEnvironment().get(7)
     }
 
     parameters {
@@ -114,7 +123,6 @@ pipeline {
 
         stage("Build") {
           steps {
-
             script {
               def LIST_EMISORES = []
               if ( params.Emisores != '' ) {
@@ -123,7 +131,7 @@ pipeline {
                   //sh "ng build --output-path=${ORIGIN}"
 
                   for (emisor in LIST_EMISORES) {
-                    sh "echo for emisor `$emisor`\n"
+                    sh "echo emisor=`$emisor`"
                   }
               }
             }
