@@ -1,7 +1,7 @@
 def defineEnvironment() {
     // Static variables
     String ORIGINS_AVAILABLE_DEV = "pxt"
-    String ORIGINS_AVAILABLE_PROD = "pxt fjy btm smx gmt"
+    String ORIGINS_AVAILABLE_PROD = "pxt,fjy,btm,smx,gmt"
 
     // Custom variables
     //String ACTUAL_BRANCH_NAME = "${env.BRANCH_NAME}"
@@ -11,22 +11,26 @@ def defineEnvironment() {
     String ENVIRONMENT = ""
     String ORIGIN = "pexto"
     String NAME_COMPONENT_JENKINS = "${env.JOB_NAME.split("/")[0]}"
+    String[] ORIGINS_AVAILABLE
 
     switch(ACTUAL_BRANCH_NAME) {
       case "develop":
         PREFIX_BRANCH = "dev"
         PREFIX_BRANCH_S3 = "dev"
         ENVIRONMENT = "develop"
+        ORIGINS_AVAILABLE = ORIGINS_AVAILABLE_DEV.split(',')
         break
       case ["master"]:
         PREFIX_BRANCH = "prod"
         PREFIX_BRANCH_S3 = ""
         ENVIRONMENT = "production"
+        ORIGINS_AVAILABLE = ORIGINS_AVAILABLE_PROD.split(',')
         break
       default:
         PREFIX_BRANCH = "dev"
         PREFIX_BRANCH_S3 = "dev"
         ENVIRONMENT = "develop"
+        ORIGINS_AVAILABLE = ORIGINS_AVAILABLE_DEV.split(',')
         break
     }
 
@@ -37,8 +41,7 @@ def defineEnvironment() {
         ORIGIN,
         NAME_COMPONENT_JENKINS,
         ENVIRONMENT,
-        ORIGINS_AVAILABLE_DEV,
-        ORIGINS_AVAILABLE_PROD
+        ORIGINS_AVAILABLE
     ]
 }
 
@@ -73,8 +76,7 @@ pipeline {
         ORIGIN = defineEnvironment().get(3)
         NAME_COMPONENT_JENKINS = defineEnvironment().get(4)
         ENVIRONMENT = defineEnvironment().get(5)
-        ORIGINS_AVAILABLE_DEV = defineEnvironment().get(6)
-        ORIGINS_AVAILABLE_PROD = defineEnvironment().get(7)
+        ORIGINS_AVAILABLE = defineEnvironment().get(6)
     }
 
     parameters {
@@ -128,6 +130,7 @@ pipeline {
               if ( params.Emisores != '' ) {
                   LIST_EMISORES = params.Emisores.split(',')
                   sh "echo $LIST_EMISORES"
+                  sh "echo $ORIGINS_AVAILABLE"
                   //sh "ng build --output-path=${ORIGIN}"
 
                   for (emisor in LIST_EMISORES) {
