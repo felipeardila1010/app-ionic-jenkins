@@ -67,16 +67,23 @@ def responseSlackError() {
 
 def defineEmisores(){
   def LIST_EMISORES = []
+  def FINAL_LIST_EMISORES= []
   if ( params.Emisores != '' ) {
       LIST_EMISORES = params.Emisores.split(',')
       sh "echo $LIST_EMISORES"
       sh "echo $ORIGINS_AVAILABLE"
       //sh "ng build --output-path=${ORIGIN}"
       for (emisor in LIST_EMISORES) {
-        emisor = emisor.toLowerCase()
-        //if((emisor.toLowerCase()) == )
-        sh "echo emisor=$emisor"
+        if(env.ORIGINS_AVAILABLE.contains((emisor.toLowerCase()))) {
+          FINAL_LIST_EMISORES.add($emisor)
+        }
       }
+
+      sh "echo final $FINAL_LIST_EMISORES"
+
+  } else {
+    env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline'
+    error(env.MESSAGE_ERROR)
   }
 }
 
@@ -96,12 +103,14 @@ pipeline {
 
     parameters {
         checkboxParameter(name:'Emisores', valueNodePath: '//CheckboxParameter/value', displayNodePath: '//CheckboxParameter/text', description: 'Emisores para desplegar', format:'JSON', uri:'https://cobre-utils.s3.us-east-2.amazonaws.com/pipeline/emisores.json')
+        string(name: 'CustomBranchForDeploy', defaultValue: '', description: 'Branch custom para despliegue *Aplica solo Dev(Rama Develop) **Dejar vacio para desplegar rama por defecto del pipeline')
     }
 
     stages {
         stage('Preparation') {
             steps {
                 script {
+
                     env.MESSAGE_ERROR = ''
                     if ( params.Emisores == '' && env.ACTUAL_BRANCH_NAME.equals('prod')) {
                         env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline de producción'
@@ -143,8 +152,6 @@ pipeline {
               def LIST_EMISORES = []
               if ( params.Emisores != '' ) {
                   LIST_EMISORES = params.Emisores.split(',')
-                  sh "echo $LIST_EMISORES"
-                  sh "echo $ORIGINS_AVAILABLE"
                   //sh "ng build --output-path=${ORIGIN}"
                   for (emisor in LIST_EMISORES) {
                     if(env.ORIGINS_AVAILABLE.contains((emisor.toLowerCase()))) {
