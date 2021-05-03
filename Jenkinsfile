@@ -35,6 +35,27 @@ def defineEnvironment() {
     ]
 }
 
+// Define methods
+def addEmoji(emoji) {
+    if (slackFirstMessage != null) {
+        slackFirstMessage.addReaction(emoji)
+    }
+}
+
+def responseFirstMessageAbort() {
+    if (slackFirstMessage != null) {
+        slackSend(channel: slackFirstMessage.threadId,
+                        color: 'warning',
+                        message: "Compilation #${BUILD_ID} Aborted \n${sh(script:'wget --auth-no-challenge --user=smolina --password=1195c3d78f17d23dce759ac1fbe37497cb -O - $BUILD_URL/consoleText | grep \'Aborted by\'', returnStdout: true).substring(27)}")
+    }
+}
+def responseSlackError() {
+    if (slackFirstMessage != null) {
+        slackSend(channel: slackFirstMessage.threadId, message: "*LOGS*\nErrors found in log:\n```${sh(script:'wget --auth-no-challenge --user=smolina --password=1195c3d78f17d23dce759ac1fbe37497cb -O - $BUILD_URL/consoleText | grep \'ERROR:\\|error\\|Error\\|\\[ERROR\\]\'', returnStdout: true)}```")
+    }
+}
+
+// Run Steps of the Pipeline
 pipeline {
     agent any
 
@@ -73,7 +94,7 @@ pipeline {
 
         stage("Build") {
             steps {
-                sh "npm run build --output-path ${ORIGIN}"
+                sh "npm run build --output-path=${ORIGIN}"
             }
         }
 
@@ -105,7 +126,6 @@ pipeline {
        }
        failure
        {
-         addEmoji('alert')
          slackSend channel: "#jenkins-${PREFIX_BRANCH}",
                    color: 'danger',
                    message: "${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Failed compilation\n❌ Compilation #${BUILD_ID}"
