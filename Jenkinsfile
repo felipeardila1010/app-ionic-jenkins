@@ -126,7 +126,7 @@ pipeline {
                 script {
                     sh "echo Definiendo emisores a desplegar..."
                     defineEmisores() // Call for define emisores
-                    env.PACKAGE_VERSION = sh(returnStdout: true, script: "grep 'version' package.json | cut -d '"' -f4 | tr '\n' '\0'")
+                    env.PACKAGE_VERSION=$(cat package.json \ | grep version \ | head -1 \ | awk -F: '{ print $2 }' \ | sed 's/[",]//g' | tr -d '[[:space:]]')
                     sh "echo version=${env.PACKAGE_VERSION}"
                     env.messageDeploy = ''
 
