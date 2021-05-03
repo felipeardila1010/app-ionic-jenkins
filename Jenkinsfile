@@ -30,19 +30,19 @@ def defineEnvironment() {
         PREFIX_BRANCH = "dev"
         PREFIX_BRANCH_S3 = "dev"
         ENVIRONMENT = "develop"
-        ORIGINS_AVAILABLE = ORIGINS_AVAILABLE_DEV.split(',')
+        ORIGINS_AVAILABLE = ORIGINS_AVAILABLE_DEV.split(",")
         break
       case ["master"]:
         PREFIX_BRANCH = "prod"
         PREFIX_BRANCH_S3 = ""
         ENVIRONMENT = "production"
-        ORIGINS_AVAILABLE = ORIGINS_AVAILABLE_PROD.split(',')
+        ORIGINS_AVAILABLE = ORIGINS_AVAILABLE_PROD.split(",")
         break
       default:
         PREFIX_BRANCH = "dev"
         PREFIX_BRANCH_S3 = "dev"
         ENVIRONMENT = "develop"
-        ORIGINS_AVAILABLE = ORIGINS_AVAILABLE_DEV.split(',')
+        ORIGINS_AVAILABLE = ORIGINS_AVAILABLE_DEV.split(",")
         break
     }
 
@@ -66,13 +66,13 @@ def addEmoji(emoji) {
 def responseFirstMessageAbort() {
     if (slackFirstMessage != null) {
 //         slackSend(channel: slackFirstMessage.threadId,
-//                         color: 'warning',
-//                         message: "Compilation #${BUILD_ID} Aborted \n${sh(script:'wget --auth-no-challenge --user=smolina --password=1195c3d78f17d23dce759ac1fbe37497cb -O - $BUILD_URL/consoleText | grep \'Aborted by\'', returnStdout: true).substring(27)}")
+//                         color: "warning",
+//                         message: "Compilation #${BUILD_ID} Aborted \n${sh(script:"wget --auth-no-challenge --user=smolina --password=1195c3d78f17d23dce759ac1fbe37497cb -O - $BUILD_URL/consoleText | grep \"Aborted by\"", returnStdout: true).substring(27)}")
     }
 }
 def responseSlackError() {
     if (slackFirstMessage != null) {
-        //slackSend(channel: slackFirstMessage.threadId, message: "*LOGS*\nErrors found in log:\n```${sh(script:'wget --auth-no-challenge --user=smolina --password=1195c3d78f17d23dce759ac1fbe37497cb -O - $BUILD_URL/consoleText | grep \'ERROR:\\|error\\|Error\\|\\[ERROR\\]\'', returnStdout: true)}```")
+        //slackSend(channel: slackFirstMessage.threadId, message: "*LOGS*\nErrors found in log:\n```${sh(script:"wget --auth-no-challenge --user=smolina --password=1195c3d78f17d23dce759ac1fbe37497cb -O - $BUILD_URL/consoleText | grep \"ERROR:\\|error\\|Error\\|\\[ERROR\\]\"", returnStdout: true)}```")
     }
 }
 
@@ -80,8 +80,8 @@ def defineEmisores(){
   def LIST_EMISORES = []
   def FINAL_LIST_EMISORES = []
   def STRING_FINAL_LIST_EMISORES = []
-  if ( params.Emisores != '' ) {
-      LIST_EMISORES = params.Emisores.split(',')
+  if ( params.Emisores != "" ) {
+      LIST_EMISORES = params.Emisores.split(",")
       for (emisor in LIST_EMISORES) {
         if(env.ORIGINS_AVAILABLE.contains((emisor.toLowerCase()))) {
           FINAL_LIST_EMISORES.add(emisor)
@@ -92,11 +92,11 @@ def defineEmisores(){
         env.STRING_FINAL_LIST_EMISORES = FINAL_LIST_EMISORES.join(",")
         sh "echo Emisores a desplegar= $FINAL_LIST_EMISORES"
       } else {
-        env.MESSAGE_ERROR = '\nNo se ha encontrado ningun emisor disponible para el deploy del pipeline'
+        env.MESSAGE_ERROR = "\nNo se ha encontrado ningun emisor disponible para el deploy del pipeline"
         error(env.MESSAGE_ERROR)
       }
   } else {
-    env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline'
+    env.MESSAGE_ERROR = "\nNo se ha seleccionado ningun Emisor para el deploy del pipeline"
     error(env.MESSAGE_ERROR)
   }
 }
@@ -116,26 +116,27 @@ pipeline {
     }
 
     parameters {
-        checkboxParameter(name:'Emisores', valueNodePath: '//CheckboxParameter/value', displayNodePath: '//CheckboxParameter/text', description: 'Emisores para desplegar', format:'JSON', uri:'https://cobre-utils.s3.us-east-2.amazonaws.com/pipeline/emisores.json')
-        string(name: 'CustomBranchForDeploy', defaultValue: '', description: 'Branch custom para despliegue *Aplica solo Dev(Rama Develop) **Dejar vacio para desplegar rama por defecto del pipeline')
+        checkboxParameter(name:"Emisores", valueNodePath: "//CheckboxParameter/value", displayNodePath: "//CheckboxParameter/text", description: "Emisores para desplegar", format:"JSON", uri:"https://cobre-utils.s3.us-east-2.amazonaws.com/pipeline/emisores.json")
+        string(name: "CustomBranchForDeploy", defaultValue: "", description: "Branch custom para despliegue *Aplica solo Dev(Rama Develop) **Dejar vacio para desplegar rama por defecto del pipeline")
     }
 
     stages {
-        stage('Preparation') {
+        stage("Preparation") {
             steps {
                 script {
                     sh "echo Definiendo emisores a desplegar..."
                     defineEmisores() // Call for define emisores
+                    env.messageDeploy = "";
 
-                    env.MESSAGE_ERROR = ''
-                    if ( params.Emisores == '' && env.ACTUAL_BRANCH_NAME.equals('prod')) {
-                        env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline de producción'
+                    env.MESSAGE_ERROR = ""
+                    if ( params.Emisores == "" && env.ACTUAL_BRANCH_NAME.equals("prod")) {
+                        env.MESSAGE_ERROR = "\nNo se ha seleccionado ningun Emisor para el deploy del pipeline de producción"
                         error(env.MESSAGE_ERROR)
                     }
-                    if ( params.CustomBranchForDeploy != '' && env.AMBIENTE.equals('dev')) {
-                        sh (script: 'git reset --hard')
+                    if ( params.CustomBranchForDeploy != "" && env.AMBIENTE.equals("dev")) {
+                        sh (script: "git reset --hard")
                         sh (script: "git checkout ${params.CustomBranchForDeploy}")
-                        sh (script: 'git pull')
+                        sh (script: "git pull")
                         env.BRANCH_NAME = params.CustomBranchForDeploy
                         defineEnvironment()
                     } else {
@@ -144,9 +145,9 @@ pipeline {
             }
         }
 
-        stage('Slack started') {
+        stage("Slack started") {
             environment {
-                COMMIT_INFO = sh (script: 'git --no-pager show -s --format=\'%aN in commit "%s"\'', returnStdout: true).trim()
+                COMMIT_INFO = sh (script: "git --no-pager show -s --format=\"%aN in commit "%s"\"", returnStdout: true).trim()
             }
             steps {
                 script {
@@ -171,6 +172,7 @@ pipeline {
                 nameOrigin = valuesOrigin.split(",")[1]
 
                 sh "ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
+                env.messageDeploy = env.messageDeploy.concat(":this-is-fine-fire: Deploy complete for emisor `$nameOrigin` in environment`$ENVIRONMENT` \n")
               }
             }
           }
@@ -205,18 +207,18 @@ pipeline {
        failure
        {
          slackSend channel: "#jenkins-${PREFIX_BRANCH}",
-                   color: 'danger',
+                   color: "danger",
                    message: "FE :iphone::vibration_mode: - ${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Failed compilation\n❌ Compilation #${BUILD_ID}${env.MESSAGE_ERROR}"
          responseSlackError()
        }
        success
        {
          slackSend channel: "#jenkins-${PREFIX_BRANCH}",
-                   color: 'good',
-                   message: "FE :iphone::vibration_mode: - ${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Finish compilation\n✔ Compilation #${BUILD_ID} with image tag `1.0.0`\n"
+                   color: "good",
+                   message: "FE :iphone::vibration_mode: - ${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Finish compilation\n✔ Compilation #${BUILD_ID} with image tag `1.0.0`\n${env.messageDeploy}"
        }
        aborted {
-          addEmoji('black_square_for_stop')
+          addEmoji("black_square_for_stop")
           responseFirstMessageAbort()
        }
    }
