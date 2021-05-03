@@ -110,7 +110,7 @@ pipeline {
         stage('Preparation') {
             steps {
                 script {
-
+                    defineEmisores() // Call for define emisores
                     env.MESSAGE_ERROR = ''
                     if ( params.Emisores == '' && env.ACTUAL_BRANCH_NAME.equals('prod')) {
                         env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline de producción'
