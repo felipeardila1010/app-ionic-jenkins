@@ -200,8 +200,8 @@ pipeline {
                   nameOrigin = valuesOrigin.split(",")[1]
 
                   String nameBucket = "jenkins-test-${codeOrigin}"
-                  if(PREFIX_BRANCH_S3 != "") {
-                    nameBucket.concat("-${PREFIX_BRANCH_S3}")
+                  if(env.PREFIX_BRANCH_S3 != "") {
+                    nameBucket.concat("-${env.PREFIX_BRANCH_S3}")
                   }
 
                   sh "aws s3 rm s3://${nameBucket}/${nameOrigin} --recursive"
