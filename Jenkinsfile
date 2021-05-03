@@ -75,7 +75,7 @@ def defineEmisores(){
       //sh "ng build --output-path=${ORIGIN}"
       for (emisor in LIST_EMISORES) {
         if(env.ORIGINS_AVAILABLE.contains((emisor.toLowerCase()))) {
-          FINAL_LIST_EMISORES.add($emisor)
+          FINAL_LIST_EMISORES.add(emisor)
         }
       }
 
