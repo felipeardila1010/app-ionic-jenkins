@@ -86,7 +86,7 @@ pipeline {
 
         stage("Deploy") {
             steps {
-                sh "echo Deploy"
+                sh "echaasdo Deploy"
                 // sh "aws s3 rm s3://jenkins-test7/${ORIGIN} --recursive"
                 // sh "aws s3 cp www s3://jenkins-test7/${ORIGIN} --recursive --acl public-read"
             }
