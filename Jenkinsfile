@@ -65,6 +65,21 @@ def responseSlackError() {
     }
 }
 
+def defineEmisores(){
+  def LIST_EMISORES = []
+  if ( params.Emisores != '' ) {
+      LIST_EMISORES = params.Emisores.split(',')
+      sh "echo $LIST_EMISORES"
+      sh "echo $ORIGINS_AVAILABLE"
+      //sh "ng build --output-path=${ORIGIN}"
+      for (emisor in LIST_EMISORES) {
+        emisor = emisor.toLowerCase()
+        //if((emisor.toLowerCase()) == )
+        sh "echo emisor=$emisor"
+      }
+  }
+}
+
 // Run Steps of the Pipeline
 pipeline {
     agent any
@@ -84,7 +99,6 @@ pipeline {
     }
 
     stages {
-
         stage('Preparation') {
             steps {
                 script {
@@ -98,7 +112,7 @@ pipeline {
                         sh (script: "git checkout ${params.CustomBranchForDeploy}")
                         sh (script: 'git pull')
                         env.BRANCH_NAME = params.CustomBranchForDeploy
-                        defineEnvironment() // update pom in custom branch
+                        defineEnvironment()
                     } else {
                     }
                 }
@@ -132,10 +146,11 @@ pipeline {
                   sh "echo $LIST_EMISORES"
                   sh "echo $ORIGINS_AVAILABLE"
                   //sh "ng build --output-path=${ORIGIN}"
-
                   for (emisor in LIST_EMISORES) {
                     emisor = emisor.toLowerCase()
-                    sh "echo emisor=$emisor"
+                    if($ORIGINS_AVAILABLE.containsValue((emisor.toLowerCase())) {
+                      sh "echo emisor=$emisor"
+                    }
                   }
               }
             }
