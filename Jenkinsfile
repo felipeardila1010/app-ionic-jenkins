@@ -70,16 +70,13 @@ def defineEmisores(){
   def FINAL_LIST_EMISORES= []
   if ( params.Emisores != '' ) {
       LIST_EMISORES = params.Emisores.split(',')
-      sh "echo $LIST_EMISORES"
-      sh "echo $ORIGINS_AVAILABLE"
-      //sh "ng build --output-path=${ORIGIN}"
       for (emisor in LIST_EMISORES) {
         if(env.ORIGINS_AVAILABLE.contains((emisor.toLowerCase()))) {
           FINAL_LIST_EMISORES.add(emisor)
         }
       }
 
-      if(FINAL_LIST_EMISORES.length > 0) {
+      if(FINAL_LIST_EMISORES.size() > 0) {
         env.FINAL_LIST_EMISORES = FINAL_LIST_EMISORES
         sh "echo Emisores a desplegar= $FINAL_LIST_EMISORES"
       } else {
@@ -115,7 +112,7 @@ pipeline {
         stage('Preparation') {
             steps {
                 script {
-                    sh "echo Definiendo emisores a desplegar... :cyclone:"
+                    sh "echo Definiendo emisores a desplegar..."
                     defineEmisores() // Call for define emisores
 
                     env.MESSAGE_ERROR = ''
