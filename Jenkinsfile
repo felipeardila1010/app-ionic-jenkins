@@ -127,7 +127,6 @@ pipeline {
                     sh "echo Definiendo emisores a desplegar..."
                     defineEmisores() // Call for define emisores
                     env.PACKAGE_VERSION= sh(script: "grep \"version\" package.json | cut -d '\"' -f4", returnStdout: true)
-                    sh "echo version=${env.PACKAGE_VERSION}"
                     env.messageDeploy = ''
 
                     env.MESSAGE_ERROR = ''
@@ -217,7 +216,7 @@ pipeline {
        {
          slackSend channel: "#jenkins-${PREFIX_BRANCH}",
                    color: 'good',
-                   message: "FE :iphone: - ${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Finish compilation\n✔ Compilation #${BUILD_ID} with image tag `1.0.0`\n${env.messageDeploy}"
+                   message: "FE :iphone: - ${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Finish compilation\n✔ Compilation #${BUILD_ID} with image tag `${env.PACKAGE_VERSION}`\n${env.messageDeploy}"
        }
        aborted {
           addEmoji('black_square_for_stop')
