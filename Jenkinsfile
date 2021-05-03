@@ -162,7 +162,7 @@ pipeline {
               //sh "ng build --output-path=${ORIGIN}"
               def valuee = env.STRING_FINAL_LIST_EMISORES.split(",")
               sh "echo ooo=$valuee"
-              for (emisor in env.FINAL_LIST_EMISORES) {
+              for (emisor in valuee) {
                 sh "echo emisor=$emisor"
               }
             }
