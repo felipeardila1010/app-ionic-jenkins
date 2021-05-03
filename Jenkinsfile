@@ -34,6 +34,29 @@ def defineEnvironment() {
         break
     }
 
+    // Definiendo emisores a desplegar...
+    def LIST_EMISORES = []
+    def FINAL_LIST_EMISORES= []
+    if ( params.Emisores != '' ) {
+        LIST_EMISORES = params.Emisores.split(',')
+        for (emisor in LIST_EMISORES) {
+          if(env.ORIGINS_AVAILABLE.contains((emisor.toLowerCase()))) {
+            FINAL_LIST_EMISORES.add(emisor)
+          }
+        }
+
+        if(FINAL_LIST_EMISORES.size() > 0) {
+          env.FINAL_LIST_EMISORES = FINAL_LIST_EMISORES
+          // Emisores a desplegar= $FINAL_LIST_EMISORES"
+        } else {
+          env.MESSAGE_ERROR = '\nNo se ha encontrado ningun emisor disponible para el deploy del pipeline'
+          error(env.MESSAGE_ERROR)
+        }
+    } else {
+      env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline'
+      error(env.MESSAGE_ERROR)
+    }
+
     return [
         ACTUAL_BRANCH_NAME,
         PREFIX_BRANCH,
@@ -65,30 +88,6 @@ def responseSlackError() {
     }
 }
 
-def defineEmisores(){
-  def LIST_EMISORES = []
-  def FINAL_LIST_EMISORES= []
-  if ( params.Emisores != '' ) {
-      LIST_EMISORES = params.Emisores.split(',')
-      for (emisor in LIST_EMISORES) {
-        if(env.ORIGINS_AVAILABLE.contains((emisor.toLowerCase()))) {
-          FINAL_LIST_EMISORES.add(emisor)
-        }
-      }
-
-      if(FINAL_LIST_EMISORES.size() > 0) {
-        env.FINAL_LIST_EMISORES = FINAL_LIST_EMISORES
-        sh "echo Emisores a desplegar= $FINAL_LIST_EMISORES"
-      } else {
-        env.MESSAGE_ERROR = '\nNo se ha encontrado ningun emisor disponible para el deploy del pipeline'
-        error(env.MESSAGE_ERROR)
-      }
-  } else {
-    env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline'
-    error(env.MESSAGE_ERROR)
-  }
-}
-
 // Run Steps of the Pipeline
 pipeline {
     agent any
@@ -101,9 +100,6 @@ pipeline {
         NAME_COMPONENT_JENKINS = defineEnvironment().get(4)
         ENVIRONMENT = defineEnvironment().get(5)
         ORIGINS_AVAILABLE = defineEnvironment().get(6)
-
-        sh "echo Definiendo emisores a desplegar..."
-        defineEmisores() // Call for define emisores
     }
 
     parameters {
