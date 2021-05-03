@@ -167,10 +167,9 @@ pipeline {
             script {
               def listEmisores = env.STRING_FINAL_LIST_EMISORES.split(",")
               for (codeInfraEmisor in listEmisores) {
-                valuesEmisor = getValueEmisor(codeInfraEmisor)
-                nameEmisor = valuesEmisor.split(",")[1]
-                sh "echo nameEmisor=$nameEmisor"
-                //sh "ng build --output-path=${ORIGIN}"
+                valuesOrigin = getValueEmisor(codeInfraEmisor)
+                nameOrigin = valuesOrigin.split(",")[1]
+                sh "ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
               }
             }
           }
@@ -190,7 +189,7 @@ pipeline {
         stage("Deploy") {
             steps {
                 sh "echo Deploy"
-                sh "ls pexto"
+                sh "ls"
                 // sh "aws s3 rm s3://jenkins-test7/${ORIGIN} --recursive"
                 // sh "aws s3 cp ${ORIGIN} s3://jenkins-test7/${ORIGIN} --recursive --acl public-read"
             }
