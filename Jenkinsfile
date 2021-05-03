@@ -155,9 +155,6 @@ pipeline {
         stage("Build") {
           steps {
             script {
-              sh "echo Definiendo emisores a desplegar..."
-              defineEmisores() // Call for define emisores
-
               sh "echo holasii=${env.FINAL_LIST_EMISORES}"
               //sh "ng build --output-path=${ORIGIN}"
               def valuee = env.STRING_FINAL_LIST_EMISORES.split(",")
