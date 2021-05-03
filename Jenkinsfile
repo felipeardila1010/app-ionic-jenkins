@@ -79,7 +79,6 @@ pipeline {
                 script {
                     env.MESSAGE_ERROR = ''
                     if ( params.Emisores == '' && env.ACTUAL_BRANCH_NAME.equals('prod')) {
-                        currentBuild.result = 'ABORTED'
                         env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline de producción'
                         error(env.MESSAGE_ERROR)
                     }
@@ -90,7 +89,6 @@ pipeline {
                         env.BRANCH_NAME = params.CustomBranchForDeploy
                         defineEnvironment() // update pom in custom branch
                     } else {
-                        env.customBranch = ACTUAL_BRANCH_NAME
                     }
                 }
             }
@@ -103,7 +101,7 @@ pipeline {
             steps {
                 script {
                     slackFirstMessage = slackSend(channel: "#jenkins-$PREFIX_BRANCH",
-                          message: "${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Started compilation (<${BUILD_URL}|Open>)\n📣 Compilation #$BUILD_ID Started by ${COMMIT_INFO}")
+                          message: "FE :iphone::vibration_mode: - ${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Started compilation (<${BUILD_URL}|Open>)\n📣 Compilation #$BUILD_ID Started by ${COMMIT_INFO}")
                 }
             }
         }
@@ -116,7 +114,12 @@ pipeline {
 
         stage("Build") {
             steps {
-                sh "ng build --output-path=${ORIGIN}"
+              def LIST_EMISORES = []
+              if ( params.Emisores != '' ) {
+                  LIST_EMISORES = params.Emisores.split(',')
+                  sh "echo $LIST_EMISORES"
+                  //sh "ng build --output-path=${ORIGIN}"
+              }
             }
         }
 
@@ -134,8 +137,7 @@ pipeline {
         stage("Deploy") {
             steps {
                 sh "echo Deploy"
-                sh "ls"
-                sh "ls www"
+                sh "ls pexto"
                 // sh "aws s3 rm s3://jenkins-test7/${ORIGIN} --recursive"
                 // sh "aws s3 cp ${ORIGIN} s3://jenkins-test7/${ORIGIN} --recursive --acl public-read"
             }
