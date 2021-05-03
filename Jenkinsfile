@@ -101,6 +101,9 @@ pipeline {
         NAME_COMPONENT_JENKINS = defineEnvironment().get(4)
         ENVIRONMENT = defineEnvironment().get(5)
         ORIGINS_AVAILABLE = defineEnvironment().get(6)
+
+        sh "echo Definiendo emisores a desplegar..."
+        defineEmisores() // Call for define emisores
     }
 
     parameters {
@@ -112,9 +115,6 @@ pipeline {
         stage('Preparation') {
             steps {
                 script {
-                    sh "echo Definiendo emisores a desplegar..."
-                    defineEmisores() // Call for define emisores
-
                     env.MESSAGE_ERROR = ''
                     if ( params.Emisores == '' && env.ACTUAL_BRANCH_NAME.equals('prod')) {
                         env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline de producción'
