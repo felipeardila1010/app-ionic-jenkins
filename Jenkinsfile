@@ -165,14 +165,11 @@ pipeline {
         stage("Build") {
           steps {
             script {
-
-            output = getValueEmisor("pxt")
-                                echo "The sum is2 ${output}"
-                                output = getValueEmisor("pxtt")
-                                echo "The sum is2 ${output}"
               def listEmisores = env.STRING_FINAL_LIST_EMISORES.split(",")
               for (codeInfraEmisor in listEmisores) {
+                echo "codeInfraEmisor=${codeInfraEmisor}"
                 valuesEmisor = getValueEmisor(codeInfraEmisor)
+                echo "valuesEmisor=${valuesEmisor}"
                 codeEmisor = valuesEmisor.split(",")[1]
                 sh "echo codeEmisor=$ecodeEmisor"
                 //sh "ng build --output-path=${ORIGIN}"
