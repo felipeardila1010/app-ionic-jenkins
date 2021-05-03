@@ -53,8 +53,7 @@ def defineEnvironment() {
         ORIGIN,
         NAME_COMPONENT_JENKINS,
         ENVIRONMENT,
-        ORIGINS_AVAILABLE,
-        PACKAGE_VERSION
+        ORIGINS_AVAILABLE
     ]
 }
 
@@ -114,7 +113,6 @@ pipeline {
         NAME_COMPONENT_JENKINS = defineEnvironment().get(4)
         ENVIRONMENT = defineEnvironment().get(5)
         ORIGINS_AVAILABLE = defineEnvironment().get(6)
-        PACKAGE_VERSION = defineEnvironment().get(7)
     }
 
     parameters {
@@ -129,7 +127,7 @@ pipeline {
                     sh "echo Definiendo emisores a desplegar..."
                     defineEmisores() // Call for define emisores
                     env.PACKAGE_VERSION = sh(returnStdout: true, script: '''grep 'version' package.json | cut -d '"' -f4 | tr '\n' '\0''')
-                    echo "version=${env.PACKAGE_VERSION}"
+                    sh "echo version=${env.PACKAGE_VERSION}"
                     env.messageDeploy = ''
 
                     env.MESSAGE_ERROR = ''
