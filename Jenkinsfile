@@ -34,9 +34,6 @@ def defineEnvironment() {
         break
     }
 
-    sh "echo Definiendo emisores a desplegar..."
-    defineEmisores() // Call for define emisores
-
     return [
         ACTUAL_BRANCH_NAME,
         PREFIX_BRANCH,
@@ -104,6 +101,9 @@ pipeline {
         NAME_COMPONENT_JENKINS = defineEnvironment().get(4)
         ENVIRONMENT = defineEnvironment().get(5)
         ORIGINS_AVAILABLE = defineEnvironment().get(6)
+
+        sh "echo Definiendo emisores a desplegar..."
+        defineEmisores() // Call for define emisores
     }
 
     parameters {
