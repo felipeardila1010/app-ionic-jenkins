@@ -177,6 +177,7 @@ pipeline {
                           //sh "ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
                           echo '${nameOrigin}'
                       }
+                  }
                 }
               }
               parallel tests
