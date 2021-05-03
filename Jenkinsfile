@@ -79,8 +79,13 @@ def defineEmisores(){
         }
       }
 
-      sh "echo final $FINAL_LIST_EMISORES"
-
+      if(FINAL_LIST_EMISORES.length > 0) {
+        env.FINAL_LIST_EMISORES = FINAL_LIST_EMISORES
+        sh "echo Emisores a desplegar= $FINAL_LIST_EMISORES"
+      } else {
+        env.MESSAGE_ERROR = '\nNo se ha encontrado ningun emisor disponible para el deploy del pipeline'
+        error(env.MESSAGE_ERROR)
+      }
   } else {
     env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline'
     error(env.MESSAGE_ERROR)
@@ -110,7 +115,9 @@ pipeline {
         stage('Preparation') {
             steps {
                 script {
+                    sh "echo Definiendo emisores a desplegar... :cyclone:"
                     defineEmisores() // Call for define emisores
+
                     env.MESSAGE_ERROR = ''
                     if ( params.Emisores == '' && env.ACTUAL_BRANCH_NAME.equals('prod')) {
                         env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline de producción'
@@ -149,15 +156,9 @@ pipeline {
         stage("Build") {
           steps {
             script {
-              def LIST_EMISORES = []
-              if ( params.Emisores != '' ) {
-                  LIST_EMISORES = params.Emisores.split(',')
-                  //sh "ng build --output-path=${ORIGIN}"
-                  for (emisor in LIST_EMISORES) {
-                    if(env.ORIGINS_AVAILABLE.contains((emisor.toLowerCase()))) {
-                      sh "echo emisor=$emisor"
-                    }
-                  }
+              //sh "ng build --output-path=${ORIGIN}"
+              for (emisor in env.FINAL_LIST_EMISORES) {
+                sh "echo emisor=$emisor"
               }
             }
           }
