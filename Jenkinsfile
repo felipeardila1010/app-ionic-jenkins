@@ -7,7 +7,7 @@ def getValueEmisor(originToSearch) {
     "gmt": "gmt06,gematours"
   ]
 
-  return origins[originToSearch]
+  return origins[originToSearch.toLowerCase()]
 }
 
 def defineEnvironment() {
