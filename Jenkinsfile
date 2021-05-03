@@ -13,7 +13,7 @@ def getValueEmisor(originToSearch) {
 def defineEnvironment() {
     // Static variables
     String ORIGINS_AVAILABLE_DEV = "pxt"
-    String ORIGINS_AVAILABLE_PROD = "pxt,fjy,btm,smx,gmt"
+    String ORIGINS_AVAILABLE_PROD = "pxt,fjy,bmt,smx,gmt"
 
     // Custom variables
     //String ACTUAL_BRANCH_NAME = "${env.BRANCH_NAME}"
@@ -169,7 +169,13 @@ pipeline {
               for (codeInfraEmisor in listEmisores) {
                 valuesOrigin = getValueEmisor(codeInfraEmisor)
                 nameOrigin = valuesOrigin.split(",")[1]
-                sh "ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
+
+                stages["Build-${nameOrigin}"] = {
+                    stage("Build-1-${nameOrigin}") {
+                      sh "echo ${nameOrigin}"
+                        //sh "ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
+                    }
+                }
               }
             }
           }
