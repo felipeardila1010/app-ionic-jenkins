@@ -114,6 +114,10 @@ pipeline {
 
         stage("Build") {
             steps {
+
+            }
+
+            script {
               def LIST_EMISORES = []
               if ( params.Emisores != '' ) {
                   LIST_EMISORES = params.Emisores.split(',')
