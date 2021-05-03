@@ -13,7 +13,8 @@ def getValueEmisor(originToSearch) {
 def defineEnvironment() {
     // Static variables
     String ORIGINS_AVAILABLE_DEV = "pxt"
-    String ORIGINS_AVAILABLE_PROD = "pxt,fjy,bmt,smx,gmt"
+    //String ORIGINS_AVAILABLE_PROD = "pxt,fjy,bmt,smx,gmt"
+    String ORIGINS_AVAILABLE_PROD = "pxt,fjy"
 
     // Custom variables
     //String ACTUAL_BRANCH_NAME = "${env.BRANCH_NAME}"
@@ -172,8 +173,7 @@ pipeline {
                 valuesOrigin = getValueEmisor(codeInfraEmisor)
                 nameOrigin = valuesOrigin.split(",")[1]
 
-                sh "ng buiddld --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
-                env.messageDeploy = env.messageDeploy.concat(":this-is-fine-fire: Deploy complete for emisor `$nameOrigin` in environment`$ENVIRONMENT` \n")
+                sh "ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
               }
             }
           }
@@ -192,10 +192,23 @@ pipeline {
 
         stage("Deploy") {
             steps {
-                sh "echo Deploy"
-                sh "ls"
-                // sh "aws s3 rm s3://jenkins-test7/${ORIGIN} --recursive"
-                // sh "aws s3 cp ${ORIGIN} s3://jenkins-test7/${ORIGIN} --recursive --acl public-read"
+              script {
+                def listEmisores = env.STRING_FINAL_LIST_EMISORES.split(",")
+                for (codeInfraEmisor in listEmisores) {
+                  valuesOrigin = getValueEmisor(codeInfraEmisor)
+                  codeOrigin = valuesOrigin.split(",")[0]
+                  nameOrigin = valuesOrigin.split(",")[1]
+
+                  String nameBucket = "jenkins-test-${codeOrigin}"
+                  if(PREFIX_BRANCH_S3 != "") {
+                    nameBucket.concat("-${PREFIX_BRANCH_S3}")
+                  }
+
+                  sh "aws s3 rm s3://${nameBucket}/${nameOrigin} --recursive"
+                  sh "aws s3 cp ${nameOrigin} s3://${nameBucket}/${nameOrigin} --recursive --acl public-read"
+                  env.messageDeploy = env.messageDeploy.concat(":this-is-fine-fire: Deploy complete for emisor `$nameOrigin` in environment`$ENVIRONMENT` \n")
+                }
+              }
             }
         }
     }
