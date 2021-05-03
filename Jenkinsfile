@@ -1,10 +1,10 @@
 def getValueEmisor(originToSearch) {
   def origins = [
-    "pxt": "pxt01",
-    "fjy": "fjy03",
-    "smx": "smx04",
-    "bmt": "bmt02",
-    "gmt": "gmt06",
+    "pxt": "pxt01,pexto",
+    "fjy": "fjy03,fujiyama",
+    "smx": "smx04,solmex",
+    "bmt": "bmt02,barumotors",
+    "gmt": "gmt06,gematours"
   ]
 
   return origins[originToSearch]
@@ -127,11 +127,6 @@ pipeline {
                     sh "echo Definiendo emisores a desplegar..."
                     defineEmisores() // Call for define emisores
 
-                    output = getValueEmisor("pxt")
-                    echo "The sum is2 ${output}"
-                    output = getValueEmisor("pxtt")
-                    echo "The sum is2 ${output}"
-
                     env.MESSAGE_ERROR = ''
                     if ( params.Emisores == '' && env.ACTUAL_BRANCH_NAME.equals('prod')) {
                         env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline de producción'
@@ -170,9 +165,16 @@ pipeline {
         stage("Build") {
           steps {
             script {
+
+            output = getValueEmisor("pxt")
+                                echo "The sum is2 ${output}"
+                                output = getValueEmisor("pxtt")
+                                echo "The sum is2 ${output}"
               def listEmisores = env.STRING_FINAL_LIST_EMISORES.split(",")
-              for (emisor in listEmisores) {
-                sh "echo emisor=$emisor"
+              for (codeInfraEmisor in listEmisores) {
+                valuesEmisor = getValueEmisor(codeInfraEmisor)
+                codeEmisor = valuesEmisor.split(",")[1]
+                sh "echo codeEmisor=$ecodeEmisor"
                 //sh "ng build --output-path=${ORIGIN}"
               }
             }
