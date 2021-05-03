@@ -47,9 +47,13 @@ pipeline {
         ENVIRONMENT = defineEnvironment().get(5)
     }
 
+    parameters {
+        checkboxParameter(name:'Emisores', valueNodePath: '//CheckboxParameter/value', displayNodePath: '//CheckboxParameter/text', description: 'Emisores para desplegar', format:'JSON', uri:'https://cobre-utils.s3.us-east-2.amazonaws.com/pipeline/emisores.json')
+    }
+
     stages {
 
-        stage('Notify start in slack') {
+        stage('Slack started') {
             environment {
                 COMMIT_INFO = sh (script: 'git --no-pager show -s --format=\'%aN in commit "%s"\'', returnStdout: true).trim()
             }
@@ -86,7 +90,7 @@ pipeline {
 
         stage("Deploy") {
             steps {
-                sh "echaasdo Deploy"
+                sh "echo Deploy"
                 // sh "aws s3 rm s3://jenkins-test7/${ORIGIN} --recursive"
                 // sh "aws s3 cp www s3://jenkins-test7/${ORIGIN} --recursive --acl public-read"
             }
@@ -100,17 +104,17 @@ pipeline {
        }
        failure
        {
-               addEmoji('alert')
-               slackSend channel: "#jenkins-${PREFIX_BRANCH}",
-                         color: 'danger',
-                         message: "${NAME_COMPONENT_JENKINS} » ${env.customBranch} #${BUILD_ID} - #${BUILD_ID} Failed compilation\n❌ Compilation #${BUILD_ID}"
-               responseSlackError()
+         addEmoji('alert')
+         slackSend channel: "#jenkins-${PREFIX_BRANCH}",
+                   color: 'danger',
+                   message: "${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Failed compilation\n❌ Compilation #${BUILD_ID}"
+         responseSlackError()
        }
        success
        {
-               slackSend channel: "#jenkins-${PREFIX_BRANCH}",
-                         color: 'good',
-                         message: "${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Finish compilation\n✔ Compilation #${BUILD_ID} with image tag `1.0.0`\n"
+         slackSend channel: "#jenkins-${PREFIX_BRANCH}",
+                   color: 'good',
+                   message: "${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Finish compilation\n✔ Compilation #${BUILD_ID} with image tag `1.0.0`\n"
        }
        aborted {
           addEmoji('black_square_for_stop')
