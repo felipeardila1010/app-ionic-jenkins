@@ -78,11 +78,6 @@ def defineEmisores(){
 
       if(FINAL_LIST_EMISORES.size() > 0) {
         env.FINAL_LIST_EMISORES = FINAL_LIST_EMISORES
-
-        for (emisor in FINAL_LIST_EMISORES) {
-            sh "echo yeahhh=$emisor"
-        }
-
         sh "echo Emisores a desplegar= $FINAL_LIST_EMISORES"
       } else {
         env.MESSAGE_ERROR = '\nNo se ha encontrado ningun emisor disponible para el deploy del pipeline'
@@ -163,7 +158,8 @@ pipeline {
 
               sh "echo holasii=${env.FINAL_LIST_EMISORES}"
               //sh "ng build --output-path=${ORIGIN}"
-              for (emisor in FINAL_LIST_EMISORES) {
+              env.FINAL_LIST_EMISORES.split(",")
+              for (emisor in env.FINAL_LIST_EMISORES) {
                 sh "echo emisor=$emisor"
               }
             }
