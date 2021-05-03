@@ -24,7 +24,6 @@ def defineEnvironment() {
     String ORIGIN = "pexto"
     String NAME_COMPONENT_JENKINS = "${env.JOB_NAME.split("/")[0]}"
     String[] ORIGINS_AVAILABLE
-    String PACKAGE_VERSION = sh(returnStdout: true, script: '''grep 'version' package.json | cut -d '"' -f4 | tr '\n' '\0''')
 
     switch(ACTUAL_BRANCH_NAME) {
       case "develop":
@@ -129,6 +128,8 @@ pipeline {
                 script {
                     sh "echo Definiendo emisores a desplegar..."
                     defineEmisores() // Call for define emisores
+                    env.PACKAGE_VERSION = sh(returnStdout: true, script: '''grep 'version' package.json | cut -d '"' -f4 | tr '\n' '\0''')
+                    echo "version=${env.PACKAGE_VERSION}"
                     env.messageDeploy = ''
 
                     env.MESSAGE_ERROR = ''
