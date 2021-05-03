@@ -86,8 +86,9 @@ pipeline {
 
         stage("Deploy") {
             steps {
-                sh "aws s3 rm s3://jenkins-test7/${ORIGIN} --recursive"
-                sh "aws s3 cp www s3://jenkins-test7/${ORIGIN} --recursive --acl public-read"
+                sh "echo Deploy"
+                // sh "aws s3 rm s3://jenkins-test7/${ORIGIN} --recursive"
+                // sh "aws s3 cp www s3://jenkins-test7/${ORIGIN} --recursive --acl public-read"
             }
         }
     }
@@ -101,22 +102,19 @@ pipeline {
        {
                addEmoji('alert')
                slackSend channel: "#jenkins-${PREFIX_BRANCH}",
-                       color: 'danger',
-                       message: "${NAME_COMPONENT_JENKINS} » ${BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Failed compilation (<${BUILD_URL}|Open>)\n❌ Compilation #$BUILD_ID Failure"
-               slackSend(channel: slackFirstMessage.threadId, message: "*LOGS*\nErrors found in log:\n```${sh(script:'wget --auth-no-challenge --user=smolina --password=1195c3d78f17d23dce759ac1fbe37497cb -O - $BUILD_URL/consoleText | grep \'ERROR:\\|error\\|Error\\|\\[ERROR\\]\'', returnStdout: true)}```")
+                         color: 'danger',
+                         message: "${NAME_COMPONENT_JENKINS} » ${env.customBranch} #${BUILD_ID} - #${BUILD_ID} Failed compilation\n❌ Compilation #${BUILD_ID}"
+               responseSlackError()
        }
        success
        {
-               addEmoji('white_check_mark')
                slackSend channel: "#jenkins-${PREFIX_BRANCH}",
-                       color: 'good',
-                       message: "${NAME_COMPONENT_JENKINS} » ${BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Finish compilation (<${BUILD_URL}|Open>)\n✔ Compilation #${BUILD_ID} Success with environment `${ENVIRONMENT}` and image tag `${env.BUILDTAG}`"
+                         color: 'good',
+                         message: "${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Finish compilation\n✔ Compilation #${BUILD_ID} with image tag `1.0.0`\n"
        }
        aborted {
-           addEmoji('black_square_for_stop')
-           slackSend(channel: slackFirstMessage.threadId,
-                       color: 'warning',
-                       message: "Compilation #${BUILD_ID} Aborted by User")
+          addEmoji('black_square_for_stop')
+          responseFirstMessageAbort()
        }
    }
 }
