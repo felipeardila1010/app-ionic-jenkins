@@ -131,6 +131,7 @@ pipeline {
                   //sh "ng build --output-path=${ORIGIN}"
 
                   for (emisor in LIST_EMISORES) {
+                    emisor = emisor.toLowerCase()
                     sh "echo emisor=$emisor"
                   }
               }
