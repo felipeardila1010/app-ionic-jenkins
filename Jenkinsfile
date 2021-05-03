@@ -74,6 +74,28 @@ pipeline {
 
     stages {
 
+        stage('Preparation') {
+            steps {
+                script {
+                    env.MESSAGE_ERROR = ''
+                    if ( params.Emisores == '' && env.ACTUAL_BRANCH_NAME.equals('prod')) {
+                        currentBuild.result = 'ABORTED'
+                        env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline de producción'
+                        error(env.MESSAGE_ERROR)
+                    }
+                    if ( params.CustomBranchForDeploy != '' && env.AMBIENTE.equals('dev')) {
+                        sh (script: 'git reset --hard')
+                        sh (script: "git checkout ${params.CustomBranchForDeploy}")
+                        sh (script: 'git pull')
+                        env.BRANCH_NAME = params.CustomBranchForDeploy
+                        defineEnvironment() // update pom in custom branch
+                    } else {
+                        env.customBranch = ACTUAL_BRANCH_NAME
+                    }
+                }
+            }
+        }
+
         stage('Slack started') {
             environment {
                 COMMIT_INFO = sh (script: 'git --no-pager show -s --format=\'%aN in commit "%s"\'', returnStdout: true).trim()
@@ -94,7 +116,7 @@ pipeline {
 
         stage("Build") {
             steps {
-                sh "npm run build --output-path=${ORIGIN}"
+                sh "ng build --output-path=${ORIGIN}"
             }
         }
 
@@ -113,8 +135,9 @@ pipeline {
             steps {
                 sh "echo Deploy"
                 sh "ls"
+                sh "ls www"
                 // sh "aws s3 rm s3://jenkins-test7/${ORIGIN} --recursive"
-                // sh "aws s3 cp www s3://jenkins-test7/${ORIGIN} --recursive --acl public-read"
+                // sh "aws s3 cp ${ORIGIN} s3://jenkins-test7/${ORIGIN} --recursive --acl public-read"
             }
         }
     }
@@ -128,7 +151,7 @@ pipeline {
        {
          slackSend channel: "#jenkins-${PREFIX_BRANCH}",
                    color: 'danger',
-                   message: "${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Failed compilation\n❌ Compilation #${BUILD_ID}"
+                   message: "${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Failed compilation\n❌ Compilation #${BUILD_ID}${env.MESSAGE_ERROR}"
          responseSlackError()
        }
        success
