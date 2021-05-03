@@ -126,6 +126,7 @@ pipeline {
                 script {
                     sh "echo Definiendo emisores a desplegar..."
                     defineEmisores() // Call for define emisores
+                    env.messageDeploy = ''
 
                     env.MESSAGE_ERROR = ''
                     if ( params.Emisores == '' && env.ACTUAL_BRANCH_NAME.equals('prod')) {
@@ -151,7 +152,7 @@ pipeline {
             steps {
                 script {
                     slackFirstMessage = slackSend(channel: "#jenkins-$PREFIX_BRANCH",
-                          message: "FE :iphone::vibration_mode: - ${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Started compilation (<${BUILD_URL}|Open>)\n📣 Compilation #$BUILD_ID Started by ${COMMIT_INFO}")
+                          message: "FE :iphone: - ${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Started compilation (<${BUILD_URL}|Open>)\n📣 Compilation #$BUILD_ID Started by ${COMMIT_INFO}")
                 }
             }
         }
@@ -207,14 +208,14 @@ pipeline {
        {
          slackSend channel: "#jenkins-${PREFIX_BRANCH}",
                    color: 'danger',
-                   message: "FE :iphone::vibration_mode: - ${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Failed compilation\n❌ Compilation #${BUILD_ID}${env.MESSAGE_ERROR}"
+                   message: "FE :iphone: - ${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Failed compilation\n❌ Compilation #${BUILD_ID}${env.MESSAGE_ERROR}"
          responseSlackError()
        }
        success
        {
          slackSend channel: "#jenkins-${PREFIX_BRANCH}",
                    color: 'good',
-                   message: "FE :iphone::vibration_mode: - ${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Finish compilation\n✔ Compilation #${BUILD_ID} with image tag `1.0.0`\n${env.messageDeploy}"
+                   message: "FE :iphone: - ${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Finish compilation\n✔ Compilation #${BUILD_ID} with image tag `1.0.0`\n${env.messageDeploy}"
        }
        aborted {
           addEmoji('black_square_for_stop')
