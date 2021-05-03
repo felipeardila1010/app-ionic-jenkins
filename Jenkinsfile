@@ -127,7 +127,6 @@ pipeline {
                     sh "echo Definiendo emisores a desplegar..."
                     defineEmisores() // Call for define emisores
                     env.PACKAGE_VERSION = sh(script: "grep \"version\" package.json | cut -d '\"' -f4 | tr -d '[[:space:]]'", returnStdout: true)
-                    sh "echo version=${env.PACKAGE_VERSION}"
                     env.messageDeploy = ''
 
                     env.MESSAGE_ERROR = ''
@@ -173,7 +172,7 @@ pipeline {
                 valuesOrigin = getValueEmisor(codeInfraEmisor)
                 nameOrigin = valuesOrigin.split(",")[1]
 
-                sh "ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
+                sh "ng buiddld --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
                 env.messageDeploy = env.messageDeploy.concat(":this-is-fine-fire: Deploy complete for emisor `$nameOrigin` in environment`$ENVIRONMENT` \n")
               }
             }
