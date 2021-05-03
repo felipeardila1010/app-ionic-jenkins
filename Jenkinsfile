@@ -153,8 +153,9 @@ pipeline {
         stage("Build") {
           steps {
             script {
+              sh "echo holasii=${env.FINAL_LIST_EMISORES}"
               //sh "ng build --output-path=${ORIGIN}"
-              for (emisor in env.FINAL_LIST_EMISORES) {
+              for (emisor in FINAL_LIST_EMISORES) {
                 sh "echo emisor=$emisor"
               }
             }
