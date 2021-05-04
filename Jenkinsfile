@@ -205,7 +205,7 @@ pipeline {
 
                   sh "aws s3 rm s3://${nameBucket}/${nameOrigin} --recursive --quiet"
                   sh "aws s3 cp ${nameOrigin} s3://${nameBucket}/${nameOrigin} --recursive --quiet --acl public-read"
-                  env.messageDeploy = env.messageDeploy.concat(":this-is-fine-fire: Deploy complete for emisor `$nameOrigin` in environment`$ENVIRONMENT` \n")
+                  env.messageDeploy = env.messageDeploy.concat(":this-is-fine-fire: Deploy complete for emisor `$nameOrigin` in environment `$ENVIRONMENT` \n")
                 }
               }
             }
