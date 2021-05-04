@@ -193,6 +193,11 @@ pipeline {
         stage("Deploy") {
             steps {
               script {
+                hola = env.ACTUAL_BRANCH_NAME
+                hola2 = env.PREFIX_BRANCH_S3
+
+                echo hola;
+                echo hola2;
                 sh "echo hola-${env.PREFIX_BRANCH_S3}"
                 sh "echo hola2-${PREFIX_BRANCH_S3}"
 
