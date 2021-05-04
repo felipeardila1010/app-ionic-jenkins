@@ -169,7 +169,6 @@ pipeline {
         stage("Build") {
           steps {
             script {
-              echo env.PREFIX_BRANCH_S3;
               def listEmisores = env.STRING_FINAL_LIST_EMISORES.split(",")
               for (codeInfraEmisor in listEmisores) {
                 valuesOrigin = getValueEmisor(codeInfraEmisor)
@@ -195,7 +194,6 @@ pipeline {
         stage("Deploy") {
             steps {
               script {
-                echo env.PREFIX_BRANCH_S3;
                 def listEmisores = env.STRING_FINAL_LIST_EMISORES.split(",")
                 for (codeInfraEmisor in listEmisores) {
                   valuesOrigin = getValueEmisor(codeInfraEmisor)
@@ -204,7 +202,8 @@ pipeline {
 
                   String nameBucket = "jenkins-test-${codeOrigin}"
                   if(env.PREFIX_BRANCH_S3 != null) {
-                    nameBucket.concat("-${PREFIX_BRANCH_S3}")
+                    echo "entraaa"
+                    nameBucket.concat("-${env.PREFIX_BRANCH_S3}")
                   }
 
                   sh "aws s3 rm s3://${nameBucket}/${nameOrigin} --recursive"
