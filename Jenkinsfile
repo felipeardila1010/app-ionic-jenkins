@@ -13,8 +13,7 @@ def getValueEmisor(originToSearch) {
 def defineEnvironment() {
     // Static variables
     String ORIGINS_AVAILABLE_DEV = "pxt"
-    //String ORIGINS_AVAILABLE_PROD = "pxt,fjy,bmt,smx,gmt"
-    String ORIGINS_AVAILABLE_PROD = "pxt,fjy"
+    String ORIGINS_AVAILABLE_PROD = "pxt,fjy,bmt,smx,gmt"
 
     // Custom variables
     //String ACTUAL_BRANCH_NAME = "${env.BRANCH_NAME}"
@@ -35,7 +34,7 @@ def defineEnvironment() {
         break
       case "master":
         PREFIX_BRANCH = "prod"
-        PREFIX_BRANCH_S3 = "dev"
+        PREFIX_BRANCH_S3 = ""
         ENVIRONMENT = "production"
         ORIGINS_AVAILABLE = ORIGINS_AVAILABLE_PROD.split(',')
         break
