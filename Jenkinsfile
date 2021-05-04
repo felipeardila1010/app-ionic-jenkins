@@ -20,7 +20,6 @@ def defineEnvironment() {
     String PREFIX_BRANCH = ""
     String PREFIX_BRANCH_S3 = ""
     String ENVIRONMENT = ""
-    String ORIGIN = "pexto"
     String NAME_COMPONENT_JENKINS = "${env.JOB_NAME.split("/")[0]}"
     String[] ORIGINS_AVAILABLE
 
@@ -49,7 +48,6 @@ def defineEnvironment() {
         ACTUAL_BRANCH_NAME,
         PREFIX_BRANCH,
         PREFIX_BRANCH_S3,
-        ORIGIN,
         NAME_COMPONENT_JENKINS,
         ENVIRONMENT,
         ORIGINS_AVAILABLE
@@ -109,10 +107,9 @@ pipeline {
         ACTUAL_BRANCH_NAME = defineEnvironment.get(0)
         PREFIX_BRANCH = defineEnvironment.get(1)
         PREFIX_BRANCH_S3 = defineEnvironment.get(2)
-        ORIGIN = defineEnvironment.get(3)
-        NAME_COMPONENT_JENKINS = defineEnvironment.get(4)
-        ENVIRONMENT = defineEnvironment.get(5)
-        ORIGINS_AVAILABLE = defineEnvironment.get(6)
+        NAME_COMPONENT_JENKINS = defineEnvironment.get(3)
+        ENVIRONMENT = defineEnvironment.get(4)
+        ORIGINS_AVAILABLE = defineEnvironment.get(5)
     }
 
     parameters {
