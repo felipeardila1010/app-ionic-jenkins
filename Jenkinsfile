@@ -200,6 +200,7 @@ pipeline {
                   codeOrigin = valuesOrigin.split(",")[0]
                   nameOrigin = valuesOrigin.split(",")[1]
 
+                  echo env.PREFIX_BRANCH_S3;
                   String nameBucket = "jenkins-test-${codeOrigin}"
                   if(env.PREFIX_BRANCH_S3 != null) {
                     nameBucket.concat("-${PREFIX_BRANCH_S3}")
