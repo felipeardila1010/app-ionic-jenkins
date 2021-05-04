@@ -200,7 +200,7 @@ pipeline {
                   codeOrigin = valuesOrigin.split(",")[0]
                   nameOrigin = valuesOrigin.split(",")[1]
 
-                  String nameBucket = "jenkins-test-${codeOrigin}"
+                  nameBucket = "jenkins-test-${codeOrigin}"
                   if(env.PREFIX_BRANCH_S3 != null) {
                     echo "entraaa"
                     nameBucket.concat("-${env.PREFIX_BRANCH_S3}")
