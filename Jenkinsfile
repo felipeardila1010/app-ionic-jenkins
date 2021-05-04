@@ -35,7 +35,7 @@ def defineEnvironment() {
         break
       case ["master"]:
         PREFIX_BRANCH = "prod"
-        PREFIX_BRANCH_S3 = ""
+        PREFIX_BRANCH_S3 = "dev"
         ENVIRONMENT = "production"
         ORIGINS_AVAILABLE = ORIGINS_AVAILABLE_PROD.split(',')
         break
