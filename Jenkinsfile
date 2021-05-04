@@ -107,7 +107,7 @@ pipeline {
     agent any
 
     environment {
-        def defineEnvironment[:] = defineEnvironment()
+        defineEnvironment = defineEnvironment()
         ACTUAL_BRANCH_NAME = defineEnvironment.get(0)
         PREFIX_BRANCH = defineEnvironment.get(1)
         PREFIX_BRANCH_S3 = defineEnvironment.get(2)
