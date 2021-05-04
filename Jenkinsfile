@@ -202,12 +202,11 @@ pipeline {
 
                   nameBucket = "jenkins-test-${codeOrigin}"
                   if(env.PREFIX_BRANCH_S3 != null) {
-                    echo "entraaa"
                     nameBucket = nameBucket + "-${env.PREFIX_BRANCH_S3}"
                   }
 
-                  sh "aws s3 rm s3://${nameBucket}/${nameOrigin} --recursive"
-                  sh "aws s3 cp ${nameOrigin} s3://${nameBucket}/${nameOrigin} --recursive --acl public-read"
+                  sh "aws s3 rm s3://${nameBucket}/${nameOrigin} --recursive --quiet"
+                  sh "aws s3 cp ${nameOrigin} s3://${nameBucket}/${nameOrigin} --recursive --quiet --acl public-read"
                   env.messageDeploy = env.messageDeploy.concat(":this-is-fine-fire: Deploy complete for emisor `$nameOrigin` in environment`$ENVIRONMENT` \n")
                 }
               }
