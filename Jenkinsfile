@@ -33,7 +33,7 @@ def defineEnvironment() {
         ENVIRONMENT = "develop"
         ORIGINS_AVAILABLE = ORIGINS_AVAILABLE_DEV.split(',')
         break
-      case ["master"]:
+      case "master":
         PREFIX_BRANCH = "prod"
         PREFIX_BRANCH_S3 = "dev"
         ENVIRONMENT = "production"
@@ -169,6 +169,7 @@ pipeline {
         stage("Build") {
           steps {
             script {
+              echo env.PREFIX_BRANCH_S3;
               def listEmisores = env.STRING_FINAL_LIST_EMISORES.split(",")
               for (codeInfraEmisor in listEmisores) {
                 valuesOrigin = getValueEmisor(codeInfraEmisor)
@@ -194,13 +195,13 @@ pipeline {
         stage("Deploy") {
             steps {
               script {
+                echo env.PREFIX_BRANCH_S3;
                 def listEmisores = env.STRING_FINAL_LIST_EMISORES.split(",")
                 for (codeInfraEmisor in listEmisores) {
                   valuesOrigin = getValueEmisor(codeInfraEmisor)
                   codeOrigin = valuesOrigin.split(",")[0]
                   nameOrigin = valuesOrigin.split(",")[1]
 
-                  echo env.PREFIX_BRANCH_S3;
                   String nameBucket = "jenkins-test-${codeOrigin}"
                   if(env.PREFIX_BRANCH_S3 != null) {
                     nameBucket.concat("-${PREFIX_BRANCH_S3}")
