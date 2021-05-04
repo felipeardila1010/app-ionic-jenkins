@@ -193,6 +193,9 @@ pipeline {
         stage("Deploy") {
             steps {
               script {
+                sh "echo hola-${env.PREFIX_BRANCH_S3}"
+                sh "echo hola2-${PREFIX_BRANCH_S3}"
+
                 def listEmisores = env.STRING_FINAL_LIST_EMISORES.split(",")
                 for (codeInfraEmisor in listEmisores) {
                   valuesOrigin = getValueEmisor(codeInfraEmisor)
@@ -200,8 +203,6 @@ pipeline {
                   nameOrigin = valuesOrigin.split(",")[1]
 
                   String nameBucket = "jenkins-test-${codeOrigin}"
-                  sh "echo hola-${env.PREFIX_BRANCH_S3}"
-                  sh "echo hola2-${PREFIX_BRANCH_S3}"
                   if(env.PREFIX_BRANCH_S3 != "") {
                     nameBucket.concat("-${PREFIX_BRANCH_S3}")
                   }
