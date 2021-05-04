@@ -107,13 +107,14 @@ pipeline {
     agent any
 
     environment {
-        ACTUAL_BRANCH_NAME = defineEnvironment().get(0)
-        PREFIX_BRANCH = defineEnvironment().get(1)
-        PREFIX_BRANCH_S3 = defineEnvironment().get(2)
-        ORIGIN = defineEnvironment().get(3)
-        NAME_COMPONENT_JENKINS = defineEnvironment().get(4)
-        ENVIRONMENT = defineEnvironment().get(5)
-        ORIGINS_AVAILABLE = defineEnvironment().get(6)
+        def defineEnvironment[:] = defineEnvironment()
+        ACTUAL_BRANCH_NAME = defineEnvironment.get(0)
+        PREFIX_BRANCH = defineEnvironment.get(1)
+        PREFIX_BRANCH_S3 = defineEnvironment.get(2)
+        ORIGIN = defineEnvironment.get(3)
+        NAME_COMPONENT_JENKINS = defineEnvironment.get(4)
+        ENVIRONMENT = defineEnvironment.get(5)
+        ORIGINS_AVAILABLE = defineEnvironment.get(6)
     }
 
     parameters {
