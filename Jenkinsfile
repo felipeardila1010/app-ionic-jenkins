@@ -16,8 +16,7 @@ def defineEnvironment() {
     String ORIGINS_AVAILABLE_PROD = "pxt,fjy,bmt,smx,gmt"
 
     // Custom variables
-    //String ACTUAL_BRANCH_NAME = "${env.BRANCH_NAME}"
-    String ACTUAL_BRANCH_NAME = "master"
+    String ACTUAL_BRANCH_NAME = "${env.BRANCH_NAME}"
     String PREFIX_BRANCH = ""
     String PREFIX_BRANCH_S3 = ""
     String ENVIRONMENT = ""
