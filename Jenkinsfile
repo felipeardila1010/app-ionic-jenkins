@@ -203,7 +203,7 @@ pipeline {
                   nameBucket = "jenkins-test-${codeOrigin}"
                   if(env.PREFIX_BRANCH_S3 != null) {
                     echo "entraaa"
-                    nameBucket.concat("-${env.PREFIX_BRANCH_S3}")
+                    nameBucket = nameBucket + "-${env.PREFIX_BRANCH_S3}"
                   }
 
                   sh "aws s3 rm s3://${nameBucket}/${nameOrigin} --recursive"
