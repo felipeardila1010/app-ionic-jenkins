@@ -129,7 +129,7 @@ pipeline {
                     sh "echo holaaa"
                     def props = sh(script:'curl https://cobre-utils.s3.us-east-2.amazonaws.com/pipeline/emisores.json', returnStdout: true).trim()
 
-                    build_map = readJSON(text: props)
+                    def build_map = readJSON(text: props)
                     sh "echo $build_map"
 
                     env.MESSAGE_ERROR = ''
