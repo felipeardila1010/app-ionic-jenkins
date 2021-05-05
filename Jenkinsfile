@@ -100,7 +100,7 @@ def defineEmisores(){
 
 // Run Steps of the Pipeline
 pipeline {
-    agent none
+    agent any
 
     stages {
         stage("Front-end") {

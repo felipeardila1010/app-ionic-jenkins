@@ -9,6 +9,8 @@ COPY package*.json ./
 COPY . .
 RUN ls
 RUN pwd
+RUN echo "NODE Version:" && node --version
+RUN echo "NPM Version:" && npm --version
 
 # Install dependencies
 RUN apk --no-cache add git
