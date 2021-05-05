@@ -62,14 +62,14 @@ def addEmoji(emoji) {
 
 def responseFirstMessageAbort() {
     if (slackFirstMessage != null) {
-//         slackSend(channel: slackFirstMessage.threadId,
-//                         color: 'warning',
-//                         message: "Compilation #${BUILD_ID} Aborted \n${sh(script:'wget --auth-no-challenge --user=smolina --password=1195c3d78f17d23dce759ac1fbe37497cb -O - $BUILD_URL/consoleText | grep \'Aborted by\'', returnStdout: true).substring(27)}")
+         slackSend(channel: slackFirstMessage.threadId,
+                   color: 'warning',
+                   message: "Compilation #${BUILD_ID} Aborted \n${sh(script:'wget --auth-no-challenge --user=jenkinslog --password=11a59713b3199a0fa96258c8015a327e88 -O - $BUILD_URL/consoleText | grep \'Aborted by\'', returnStdout: true).substring(27)}")
     }
 }
 def responseSlackError() {
     if (slackFirstMessage != null) {
-        //slackSend(channel: slackFirstMessage.threadId, message: "*LOGS*\nErrors found in log:\n```${sh(script:'wget --auth-no-challenge --user=smolina --password=1195c3d78f17d23dce759ac1fbe37497cb -O - $BUILD_URL/consoleText | grep \'ERROR:\\|error\\|Error\\|\\[ERROR\\]\'', returnStdout: true)}```")
+        slackSend(channel: slackFirstMessage.threadId, message: "*LOGS*\nErrors found in log:\n```${sh(script:'wget --auth-no-challenge --user=jenkinslog --password=11a59713b3199a0fa96258c8015a327e88  -O - $BUILD_URL/consoleText | grep \'ERROR:\\|error\\|Error\\|\\[ERROR\\]\'', returnStdout: true)}```")
     }
 }
 
@@ -157,7 +157,7 @@ pipeline {
 
         stage("Install") {
             steps {
-                sh "docker run --platform linux/amd64 --rm -v $WORKSPACE:/app -w /app pipekung/angular:node14.2 yarn"
+                sh "docker run --platform linux/amd64 --rm -v $WORKSPACE:/app -w /app node:14-alpine npm install"
             }
         }
 
@@ -169,8 +169,7 @@ pipeline {
                 valuesOrigin = getValueEmisor(codeInfraEmisor)
                 nameOrigin = valuesOrigin.split(",")[1]
 
-                // sh "docker run --rm -v $WORKSPACE:/app -w /app node:14-alpine npm install"
-                sh "docker run --platform linux/amd64 --rm -v $WORKSPACE:/app -w /app pipekung/angular:node14.2 ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
+                sh "docker run --platform linux/amd64 --rm -v $WORKSPACE:/app -w /app node:14-alpine npm install -g @angular/cli && ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
               }
             }
           }
