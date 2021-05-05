@@ -126,6 +126,10 @@ pipeline {
                     env.PACKAGE_VERSION = sh(script: "grep \"version\" package.json | cut -d '\"' -f4 | tr -d '[[:space:]]'", returnStdout: true)
                     env.messageDeploy = ''
 
+                    sh "echo holaaa"
+                    def props = readJSON file: 'https://cobre-utils.s3.us-east-2.amazonaws.com/pipeline/emisores.json'
+                    sh "echo $props"
+
                     env.MESSAGE_ERROR = ''
                     if ( params.Emisores == '' && env.ACTUAL_BRANCH_NAME.equals('prod')) {
                         env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline de producción'
