@@ -100,7 +100,9 @@ def defineEmisores(){
 
 // Run Steps of the Pipeline
 pipeline {
-    agent any
+    agent {
+        docker { image 'node:14-alpine' }
+    }
 
     environment {
         defineEnvironment = defineEnvironment()
@@ -121,6 +123,7 @@ pipeline {
         stage('Preparation') {
             steps {
                 script {
+                    sh 'node --version'
                     sh "echo Definiendo emisores a desplegar..."
                     defineEmisores() // Call for define emisores
                     env.PACKAGE_VERSION = sh(script: "grep \"version\" package.json | cut -d '\"' -f4 | tr -d '[[:space:]]'", returnStdout: true)
