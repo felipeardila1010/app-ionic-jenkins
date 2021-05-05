@@ -157,7 +157,7 @@ pipeline {
 
         stage("Install") {
             steps {
-                sh "docker run --rm -v $WORKSPACE:/app -w /app pipekung/angular:node14.2 yarn"
+                sh "docker run --platform linux/amd64 --rm -v $WORKSPACE:/app -w /app pipekung/angular:node14.2 yarn"
             }
         }
 
@@ -170,7 +170,7 @@ pipeline {
                 nameOrigin = valuesOrigin.split(",")[1]
 
                 // sh "docker run --rm -v $WORKSPACE:/app -w /app node:14-alpine npm install"
-                sh "docker run --rm -v $WORKSPACE:/app -w /app pipekung/angular:node14.2 ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
+                sh "docker run --platform linux/amd64 --rm -v $WORKSPACE:/app -w /app pipekung/angular:node14.2 ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
               }
             }
           }
