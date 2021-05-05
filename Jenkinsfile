@@ -157,7 +157,7 @@ pipeline {
 
         stage("Install") {
             steps {
-                sh "npm install"
+                sh "docker run --rm -v $WORKSPACE:/app -w /app node:14-alpine npm install"
             }
         }
 
@@ -169,7 +169,7 @@ pipeline {
                 valuesOrigin = getValueEmisor(codeInfraEmisor)
                 nameOrigin = valuesOrigin.split(",")[1]
 
-                sh "docker run --rm -v $WORKSPACE:/app -w /app node:14-alpine npm install"
+                // sh "docker run --rm -v $WORKSPACE:/app -w /app node:14-alpine npm install"
                 sh "ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
               }
             }
