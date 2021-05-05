@@ -127,7 +127,7 @@ pipeline {
                     env.messageDeploy = ''
 
                     sh "echo holaaa"
-                    def props = readJSON(text:sh(script:'curl -s "https://cobre-utils.s3.us-east-2.amazonaws.com/pipeline/emisores.json"', returnStdout: true))
+                    def props = readJSON(sh(script:'curl -s "https://cobre-utils.s3.us-east-2.amazonaws.com/pipeline/emisores.json"', returnStdout: true))
                     sh "echo $props"
 
                     env.MESSAGE_ERROR = ''
