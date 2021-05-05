@@ -108,7 +108,7 @@ def getEmisores() {
   emisoresMap = emisoresMap.CheckboxParameter
   sh "echo $emisoresMap"
 
-  def listEmisores = ""
+  def listEmisores = []
   for (emisorMap in emisoresMap) {
       listEmisores.add((emisorMap.key))
   }
