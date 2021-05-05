@@ -100,9 +100,7 @@ def defineEmisores(){
 
 // Run Steps of the Pipeline
 pipeline {
-    agent {
-        agent { dockerfile true }
-    }
+    agent { dockerfile true }
 
     environment {
         defineEnvironment = defineEnvironment()
