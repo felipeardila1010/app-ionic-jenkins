@@ -157,7 +157,7 @@ pipeline {
 
         stage("Install") {
             steps {
-                sh "docker run --rm -v $WORKSPACE:/app -w /app pipekung/angular:node14.2 npm install"
+                sh "docker run --rm -v $WORKSPACE:/app -w /app pipekung/angular:node14.2 yarn"
             }
         }
 
