@@ -99,19 +99,18 @@ def defineEmisores(){
 }
 
 // Run Steps of the Pipeline
-node {
+pipeline {
+    agent none
 
-    docker.image('node:14-alpine').inside {
-      stage('NPM Install') {
-          withEnv(["NPM_CONFIG_LOGLEVEL=warn"]) {
-              sh 'npm install'
-          }
-      }
-
-      stage('Build') {
-          milestone()
-          sh 'ng build'
-      }
+    stages {
+        stage('Front-end') {
+            agent { dockerfile true }
+            steps {
+              stage('Front-end') {
+               sh 'npm install'
+              }
+            }
+        }
     }
 
    post {
