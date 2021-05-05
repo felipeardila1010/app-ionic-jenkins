@@ -131,9 +131,10 @@ pipeline {
                     emisoresMap = emisoresMap.CheckboxParameter
                     sh "echo $emisoresMap"
 
-                    def listEmisores = [:]
+                    def listEmisores = []
                     for ( emisorMap in emisoresMap) {
-                        listEmisores.add(emisorMap.key)
+                        sh "echo hola=$emisorMap"
+                        listEmisores.add((emisorMap.key))
                     }
                     sh "echo listEmisores=$listEmisores"
 
