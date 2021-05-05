@@ -130,7 +130,7 @@ pipeline {
                     def props = sh(script:'curl https://cobre-utils.s3.us-east-2.amazonaws.com/pipeline/emisores.json', returnStdout: true).trim()
 
                     def build_map = readJSON(text: props)
-                    sh "echo $build_map"
+                    sh "echo $build_map.CheckboxParameter"
 
                     env.MESSAGE_ERROR = ''
                     if ( params.Emisores == '' && env.ACTUAL_BRANCH_NAME.equals('prod')) {
