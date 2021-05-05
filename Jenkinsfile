@@ -77,7 +77,7 @@ def defineEmisores(){
   def LIST_EMISORES = []
   def FINAL_LIST_EMISORES = []
   def STRING_FINAL_LIST_EMISORES = []
-  if ( params.Emisores != '' ) {
+  if ((params.Emisores != '' && ENVIRONMENT == 'production') || (ENVIRONMENT == 'develop')) {
       LIST_EMISORES = params.Emisores.split(',')
       for (emisor in LIST_EMISORES) {
         if(env.ORIGINS_AVAILABLE.contains((emisor.toLowerCase()))) {
@@ -157,7 +157,7 @@ pipeline {
 
         stage("Install") {
             steps {
-                sh "docker run --rm -v $WORKSPACE:/app -w /app node:14-alpine npm install"
+                sh "docker run --rm -v $WORKSPACE:/app -w /app pipekung/angular:node14.2 npm install"
             }
         }
 
@@ -170,7 +170,7 @@ pipeline {
                 nameOrigin = valuesOrigin.split(",")[1]
 
                 // sh "docker run --rm -v $WORKSPACE:/app -w /app node:14-alpine npm install"
-                sh "ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
+                sh "docker run --rm -v $WORKSPACE:/app -w /app pipekung/angular:node14.2 ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
               }
             }
           }
