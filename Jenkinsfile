@@ -127,8 +127,11 @@ pipeline {
                     env.messageDeploy = ''
 
                     sh "echo holaaa"
-                    def props = readJSON text: (sh(script:'curl https://cobre-utils.s3.us-east-2.amazonaws.com/pipeline/emisores.json', returnStdout: true))
+                    def props = sh(script:'curl https://cobre-utils.s3.us-east-2.amazonaws.com/pipeline/emisores.json', returnStdout: true)
                     sh "echo $props"
+
+                    build_map = readJSON(text: props)
+                    sh "echo $build_map"
 
                     env.MESSAGE_ERROR = ''
                     if ( params.Emisores == '' && env.ACTUAL_BRANCH_NAME.equals('prod')) {
