@@ -82,7 +82,7 @@ def defineEmisores(){
     env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline'
     error(env.MESSAGE_ERROR)
   } else if(params.Emisores == '' && ENVIRONMENT == 'develop') {
-    LIST_EMISORES = getEmisores().split(',')
+    LIST_EMISORES = getEmisores()
   } else {
     LIST_EMISORES = params.Emisores.split(',')
   }
@@ -108,9 +108,8 @@ def getEmisores() {
   emisoresMap = emisoresMap.CheckboxParameter
   sh "echo $emisoresMap"
 
-  def listEmisores = []
-  for ( emisorMap in emisoresMap) {
-      sh "echo hola=$emisorMap"
+  def listEmisores = ""
+  for (emisorMap in emisoresMap) {
       listEmisores.add((emisorMap.key))
   }
   sh "echo All Emisores=$listEmisores"
