@@ -158,6 +158,7 @@ pipeline {
 
         stage("Install") {
             steps {
+                sh "ls"
                 sh "npm install"
             }
         }

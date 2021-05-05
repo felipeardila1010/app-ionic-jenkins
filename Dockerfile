@@ -7,6 +7,8 @@ WORKDIR /usr/src/app
 # Bundle app source
 COPY package*.json ./
 COPY . .
+RUN ls
+RUN pwd
 
 # Install dependencies
 RUN apk --no-cache add git
