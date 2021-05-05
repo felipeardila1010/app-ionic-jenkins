@@ -100,7 +100,7 @@ def defineEmisores(){
 
 // Run Steps of the Pipeline
 pipeline {
-    agent { dockerfile true }
+    agent any
 
     environment {
         defineEnvironment = defineEnvironment()
@@ -121,7 +121,6 @@ pipeline {
         stage('Preparation') {
             steps {
                 script {
-                    sh 'node --version'
                     sh "echo Definiendo emisores a desplegar..."
                     defineEmisores() // Call for define emisores
                     env.PACKAGE_VERSION = sh(script: "grep \"version\" package.json | cut -d '\"' -f4 | tr -d '[[:space:]]'", returnStdout: true)
@@ -156,26 +155,33 @@ pipeline {
             }
         }
 
-        stage("Install") {
-            steps {
-                sh "ls"
-                sh "npm install"
-            }
-        }
-
-        stage("Build") {
-          steps {
-            script {
-              def listEmisores = env.STRING_FINAL_LIST_EMISORES.split(",")
-              for (codeInfraEmisor in listEmisores) {
-                valuesOrigin = getValueEmisor(codeInfraEmisor)
-                nameOrigin = valuesOrigin.split(",")[1]
-
-                sh "ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
+        docker.image('trion/ng-cli-karma:1.2.1').inside {
+          stage('NPM Install') {
+              withEnv(["NPM_CONFIG_LOGLEVEL=warn"]) {
+                  sh 'npm install'
               }
-            }
+          }
+
+          stage('Build') {
+              milestone()
+              sh 'ng build'
           }
         }
+        //end docker
+
+//         stage("Build") {
+//           steps {
+//             script {
+//               def listEmisores = env.STRING_FINAL_LIST_EMISORES.split(",")
+//               for (codeInfraEmisor in listEmisores) {
+//                 valuesOrigin = getValueEmisor(codeInfraEmisor)
+//                 nameOrigin = valuesOrigin.split(",")[1]
+//
+//                 sh "ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
+//               }
+//             }
+//           }
+//         }
 
 //         stage("SonarQube analysis") {
 //             steps {
