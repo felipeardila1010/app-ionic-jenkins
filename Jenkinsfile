@@ -103,11 +103,19 @@ pipeline {
     agent none
 
     stages {
-        stage('Front-end') {
+        stage("Front-end") {
             agent { dockerfile true }
-            steps {
-               sh 'npm install'
-
+            stages {
+               stage("build") {
+                   steps {
+                       sh 'npm install'
+                   }
+               }
+               stage("test") {
+                   steps {
+                       sh 'ng build'
+                   }
+               }
             }
         }
     }
