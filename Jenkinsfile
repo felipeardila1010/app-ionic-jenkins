@@ -101,7 +101,7 @@ def defineEmisores(){
 // Run Steps of the Pipeline
 pipeline {
     agent {
-        docker { image 'node:14-alpine' }
+        agent { dockerfile true }
     }
 
     environment {
