@@ -99,7 +99,7 @@ def defineEmisores(){
 }
 
 // Run Steps of the Pipeline
-pipeline {
+node {
     agent any
 
     environment {
