@@ -126,17 +126,16 @@ pipeline {
                     env.PACKAGE_VERSION = sh(script: "grep \"version\" package.json | cut -d '\"' -f4 | tr -d '[[:space:]]'", returnStdout: true)
                     env.messageDeploy = ''
 
-                    sh "echo holaaa"
                     def emisoresJSON = sh(script:'curl https://cobre-utils.s3.us-east-2.amazonaws.com/pipeline/emisores.json', returnStdout: true).trim()
                     def emisoresMap = readJSON(text: emisoresJSON)
                     emisoresMap = emisoresMap.CheckboxParameter
-                    sh "echo emisoresMap"
+                    sh "echo $emisoresMap"
 
                     def listEmisores = [:]
-                    for ( emisorMap in emisoresMap ) {
+                    for ( emisorMap in emisoresMap) {
                         listEmisores.add(emisorMap.key)
                     }
-                    echo "listEmisores=$listEmisores"
+                    sh "echo listEmisores=$listEmisores"
 
                     env.MESSAGE_ERROR = ''
                     if ( params.Emisores == '' && env.ACTUAL_BRANCH_NAME.equals('prod')) {
