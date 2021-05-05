@@ -105,7 +105,7 @@ pipeline {
     stages {
         stage('Front-end') {
             agent { dockerfile true }
-            steps {
+            stages {
               stage('Front-end') {
                sh 'npm install'
               }
