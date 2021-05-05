@@ -77,25 +77,45 @@ def defineEmisores(){
   def LIST_EMISORES = []
   def FINAL_LIST_EMISORES = []
   def STRING_FINAL_LIST_EMISORES = []
-  if ((params.Emisores != '' && ENVIRONMENT == 'production') || (ENVIRONMENT == 'develop')) {
-      LIST_EMISORES = params.Emisores.split(',')
-      for (emisor in LIST_EMISORES) {
-        if(env.ORIGINS_AVAILABLE.contains((emisor.toLowerCase()))) {
-          FINAL_LIST_EMISORES.add(emisor)
-        }
-      }
 
-      if(FINAL_LIST_EMISORES.size() > 0) {
-        env.STRING_FINAL_LIST_EMISORES = FINAL_LIST_EMISORES.join(",")
-        sh "echo Emisores a desplegar= $FINAL_LIST_EMISORES"
-      } else {
-        env.MESSAGE_ERROR = '\nNo se ha encontrado ningun emisor disponible para el deploy del pipeline'
-        error(env.MESSAGE_ERROR)
-      }
-  } else {
+  if (params.Emisores != '' && ENVIRONMENT == 'production') {
     env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline'
     error(env.MESSAGE_ERROR)
+  } else if(params.Emisores == '' && ENVIRONMENT == 'develop') {
+    LIST_EMISORES = getEmisores().split(',')
+  } else {
+    LIST_EMISORES = params.Emisores.split(',')
   }
+
+  for (emisor in LIST_EMISORES) {
+    if(env.ORIGINS_AVAILABLE.contains((emisor.toLowerCase()))) {
+      FINAL_LIST_EMISORES.add(emisor)
+    }
+  }
+
+  if(FINAL_LIST_EMISORES.size() > 0) {
+    env.STRING_FINAL_LIST_EMISORES = FINAL_LIST_EMISORES.join(",")
+    sh "echo Emisores a desplegar= $FINAL_LIST_EMISORES"
+  } else {
+    env.MESSAGE_ERROR = '\nNo se ha encontrado ningun emisor disponible para el deploy del pipeline'
+    error(env.MESSAGE_ERROR)
+  }
+}
+
+def getEmisores() {
+  def emisoresJSON = sh(script:'curl https://cobre-utils.s3.us-east-2.amazonaws.com/pipeline/emisores.json', returnStdout: true).trim()
+  def emisoresMap = readJSON(text: emisoresJSON)
+  emisoresMap = emisoresMap.CheckboxParameter
+  sh "echo $emisoresMap"
+
+  def listEmisores = []
+  for ( emisorMap in emisoresMap) {
+      sh "echo hola=$emisorMap"
+      listEmisores.add((emisorMap.key))
+  }
+  sh "echo All Emisores=$listEmisores"
+
+  return listEmisores
 }
 
 // Run Steps of the Pipeline
@@ -125,18 +145,6 @@ pipeline {
                     defineEmisores() // Call for define emisores
                     env.PACKAGE_VERSION = sh(script: "grep \"version\" package.json | cut -d '\"' -f4 | tr -d '[[:space:]]'", returnStdout: true)
                     env.messageDeploy = ''
-
-                    def emisoresJSON = sh(script:'curl https://cobre-utils.s3.us-east-2.amazonaws.com/pipeline/emisores.json', returnStdout: true).trim()
-                    def emisoresMap = readJSON(text: emisoresJSON)
-                    emisoresMap = emisoresMap.CheckboxParameter
-                    sh "echo $emisoresMap"
-
-                    def listEmisores = []
-                    for ( emisorMap in emisoresMap) {
-                        sh "echo hola=$emisorMap"
-                        listEmisores.add((emisorMap.key))
-                    }
-                    sh "echo listEmisores=$listEmisores"
 
                     env.MESSAGE_ERROR = ''
                     if ( params.Emisores == '' && env.ACTUAL_BRANCH_NAME.equals('prod')) {
