@@ -105,12 +105,14 @@ pipeline {
     stages {
         stage("Front-end") {
             agent { dockerfile true }
+            environment { HOME = '.' }
             stages {
                stage("build") {
                    steps {
                       sh 'pwd'
                       sh 'ls'
-                       sh 'npm install'
+                      sh 'npm --version'
+                      sh 'npm install'
                    }
                }
                stage("test") {
