@@ -100,121 +100,18 @@ def defineEmisores(){
 
 // Run Steps of the Pipeline
 node {
-    agent any
 
-    environment {
-        defineEnvironment = defineEnvironment()
-        ACTUAL_BRANCH_NAME = defineEnvironment.get(0)
-        PREFIX_BRANCH = defineEnvironment.get(1)
-        PREFIX_BRANCH_S3 = defineEnvironment.get(2)
-        NAME_COMPONENT_JENKINS = defineEnvironment.get(3)
-        ENVIRONMENT = defineEnvironment.get(4)
-        ORIGINS_AVAILABLE = defineEnvironment.get(5)
-    }
-
-    parameters {
-        checkboxParameter(name:'Emisores', valueNodePath: '//CheckboxParameter/value', displayNodePath: '//CheckboxParameter/text', description: 'Emisores para desplegar', format:'JSON', uri:'https://cobre-utils.s3.us-east-2.amazonaws.com/pipeline/emisores.json')
-        string(name: 'CustomBranchForDeploy', defaultValue: '', description: 'Branch custom para despliegue *Aplica solo Dev(Rama Develop) **Dejar vacio para desplegar rama por defecto del pipeline')
-    }
-
-    stages {
-        stage('Preparation') {
-            steps {
-                script {
-                    sh "echo Definiendo emisores a desplegar..."
-                    defineEmisores() // Call for define emisores
-                    env.PACKAGE_VERSION = sh(script: "grep \"version\" package.json | cut -d '\"' -f4 | tr -d '[[:space:]]'", returnStdout: true)
-                    env.messageDeploy = ''
-
-                    env.MESSAGE_ERROR = ''
-                    if ( params.Emisores == '' && env.ACTUAL_BRANCH_NAME.equals('prod')) {
-                        env.MESSAGE_ERROR = '\nNo se ha seleccionado ningun Emisor para el deploy del pipeline de producción'
-                        error(env.MESSAGE_ERROR)
-                    }
-                    if ( params.CustomBranchForDeploy != '' && env.AMBIENTE.equals('dev')) {
-                        sh (script: 'git reset --hard')
-                        sh (script: "git checkout ${params.CustomBranchForDeploy}")
-                        sh (script: 'git pull')
-                        env.BRANCH_NAME = params.CustomBranchForDeploy
-                        defineEnvironment()
-                    } else {
-                    }
-                }
-            }
-        }
-
-        stage('Slack started') {
-            environment {
-                COMMIT_INFO = sh (script: 'git --no-pager show -s --format=\'%aN in commit "%s"\'', returnStdout: true).trim()
-            }
-            steps {
-                script {
-                    slackFirstMessage = slackSend(channel: "#jenkins-$PREFIX_BRANCH",
-                          message: "FE :iphone: - ${NAME_COMPONENT_JENKINS} » ${ACTUAL_BRANCH_NAME} #${BUILD_ID} - #${BUILD_ID} Started compilation (<${BUILD_URL}|Open>)\n📣 Compilation #$BUILD_ID Started by ${COMMIT_INFO}")
-                }
-            }
-        }
-
-        docker.image('node:14-alpine').inside {
-          stage('NPM Install') {
-              withEnv(["NPM_CONFIG_LOGLEVEL=warn"]) {
-                  sh 'npm install'
-              }
+    docker.image('node:14-alpine').inside {
+      stage('NPM Install') {
+          withEnv(["NPM_CONFIG_LOGLEVEL=warn"]) {
+              sh 'npm install'
           }
+      }
 
-          stage('Build') {
-              milestone()
-              sh 'ng build'
-          }
-        }
-        //end docker
-
-//         stage("Build") {
-//           steps {
-//             script {
-//               def listEmisores = env.STRING_FINAL_LIST_EMISORES.split(",")
-//               for (codeInfraEmisor in listEmisores) {
-//                 valuesOrigin = getValueEmisor(codeInfraEmisor)
-//                 nameOrigin = valuesOrigin.split(",")[1]
-//
-//                 sh "ng build --output-path=${nameOrigin} --base-href=/${nameOrigin}/ --deploy-url /${nameOrigin}/"
-//               }
-//             }
-//           }
-//         }
-
-//         stage("SonarQube analysis") {
-//             steps {
-//                 sh "docker run --platform linux/amd64 --rm -v /Users/felipeardila1010/.m2:/root/.m2 -v $WORKSPACE:/app -w /app \
-//                     maven:3-alpine mvn sonar:sonar \
-//                         -Dsonar.projectKey=$NAME_COMPONENT_JENKINS \
-//                         -Dsonar.host.url=http://sonarqube.qa.cobre.co \
-//                         -Dsonar.login=d3f4b3583131da7da2430ea151ba73ae9b109821 \
-//                         -Dsonar.java.binaries=./src"
-//             }
-//         }
-
-        stage("Deploy") {
-            steps {
-              script {
-                def listEmisores = env.STRING_FINAL_LIST_EMISORES.split(",")
-                for (codeInfraEmisor in listEmisores) {
-                  valuesOrigin = getValueEmisor(codeInfraEmisor)
-                  codeOrigin = valuesOrigin.split(",")[0]
-                  nameOrigin = valuesOrigin.split(",")[1]
-
-                  nameBucket = "jenkins-test-${codeOrigin}"
-                  if(env.PREFIX_BRANCH_S3 != null) {
-                    nameBucket = nameBucket + "-${env.PREFIX_BRANCH_S3}"
-                  }
-
-                  sh "aws s3 rm s3://${nameBucket}/${nameOrigin} --recursive --quiet"
-                  sh "aws s3 cp ${nameOrigin} s3://${nameBucket}/${nameOrigin} --recursive --quiet --acl public-read"
-                  env.messageDeploy = env.messageDeploy.concat(":this-is-fine-fire: Deploy complete for emisor `$nameOrigin` in environment `$ENVIRONMENT` \n")
-                }
-              }
-            }
-        }
+      stage('Build') {
+          milestone()
+          sh 'ng build'
+      }
     }
 
    post {
